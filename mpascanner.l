@@ -1,5 +1,5 @@
 %option case-insensitive
-letra				[a-z]+
+letra				[a-z]
 num 				[0-9]+
 
 
@@ -9,43 +9,43 @@ num 				[0-9]+
 
 %%
 
-{letra}								{printf("ID(%s)\n",yytext);}
+{letra}{num}						{printf("ID(%s)\n",yytext);}
 {num}								{printf("INTLIT(%s)\n",yytext);}
 {num}"."{num}(e[-/+]+{num})?		{printf("REALLIT(%s)\n",yytext);}
 "'"[^\n]*("'")+						{printf("STRING(%s)\n",yytext);}
-":="								{printf("ASSIGN\n",yytext);}
-"begin"								{printf("BEGIN\n",yytext);}
-":"									{printf("COLON\n",yytext);}
-","									{printf("COMMA\n",yytext);}
-"do"								{printf("DO\n",yytext);}
-"."									{printf("DOT\n",yytext);}
-"else"								{printf("ELSE\n",yytext);}
-"end"								{printf("END\n",yytext);}
-"forward"							{printf("FORWARD\n",yytext);}
-"function"							{printf("FUNCTION\n",yytext);}
-"if"								{printf("IF\n",yytext);}
-"("									{printf("LBRAC\n",yytext);}
-"not"								{printf("NOT\n",yytext);}
-"output"							{printf("OUTPUT\n",yytext);}
-"paramstr"							{printf("PARAMSTR\n",yytext);}
-"program"							{printf("PROGRAM\n",yytext);}
-")"									{printf("RBRAC\n",yytext);}
-"repeat"							{printf("REPEAT\n",yytext);}
-";"									{printf("SEMIC\n",yytext);}
-"then"								{printf("THEN\n",yytext);}
-"until"								{printf("UNTIL\n",yytext);}
-"val"								{printf("VAL\n",yytext);}
-"var"								{printf("VAR\n",yytext);}
-"while"								{printf("WHILE\n",yytext);}
-"writeln"							{printf("WRITELN\n",yytext);}
+":="								{printf("ASSIGN\n");}
+"begin"								{printf("BEGIN\n");}
+":"									{printf("COLON\n");}
+","									{printf("COMMA\n");}
+"do"								{printf("DO\n");}
+"."									{printf("DOT\n");}
+"else"								{printf("ELSE\n");}
+"end"								{printf("END\n");}
+"forward"							{printf("FORWARD\n");}
+"function"							{printf("FUNCTION\n");}
+"if"								{printf("IF\n");}
+"("									{printf("LBRAC\n");}
+"not"								{printf("NOT\n");}
+"output"							{printf("OUTPUT\n");}
+"paramstr"							{printf("PARAMSTR\n");}
+"program"							{printf("PROGRAM\n");}
+")"									{printf("RBRAC\n");}
+"repeat"							{printf("REPEAT\n");}
+";"									{printf("SEMIC\n");}
+"then"								{printf("THEN\n");}
+"until"								{printf("UNTIL\n");}
+"val"								{printf("VAL\n");}
+"var"								{printf("VAR\n");}
+"while"								{printf("WHILE\n");}
+"writeln"							{printf("WRITELN\n");}
 
 
 
 
-["and" | "or"]									{printf("OP1\n",yytext);}
-["<" | ">" | "=" | "<>" | "<=" | ">="]			{printf("OP2\n",yytext);}
-["+" | "-"]										{printf("OP3\n",yytext);}
-["*" | "/" | "mod" | "div" ]					{printf("OP4\n",yytext);}
+["and" | "or"]									{printf("OP1\n");}
+["<" | ">" | "=" | "<>" | "<=" | ">="]			{printf("OP2\n");}
+["+" | "-"]										{printf("OP3\n");}
+["*" | "/" | "mod" | "div" ]					{printf("OP4\n");}
 
 
 
