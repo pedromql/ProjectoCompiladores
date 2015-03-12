@@ -42,10 +42,10 @@ num 				[0-9]+
 
 
 
-["and" | "or"]									{printf("OP1\n");}
-["<" | ">" | "=" | "<>" | "<=" | ">="]			{printf("OP2\n");}
-["+" | "-"]										{printf("OP3\n");}
-["*" | "/" | "mod" | "div" ]					{printf("OP4\n");}
+"and"|"or"									{printf("OP1\n");}
+"<" | ">" | "=" | "<>" | "<=" | ">="			{printf("OP2\n");}
+"+" | "-"										{printf("OP3\n");}
+"*" | "/" | "mod" | "div" 					{printf("OP4\n");}
 
 
 
