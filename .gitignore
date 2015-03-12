@@ -1,0 +1,6 @@
+mpascanner.zip
+mpascanner
+mpascanner.c
+*.mpa
+*.txt
+mpascanner.l.orig
