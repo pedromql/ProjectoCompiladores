@@ -3,16 +3,15 @@ letra				[a-z]
 num 				[0-9]+
 
 
-%{
-	
-%}
-
 %%
+
+("(*"|"{")[^\n]*("}"|"*)")			;
 
 
 {num}								{printf("INTLIT(%s)\n",yytext);}
 {num}("."{num})?(e[-/+]?{num})?		{printf("REALLIT(%s)\n",yytext);}
 "'"([^\n|']|'')*"'"					{printf("STRING(%s)\n",yytext);}
+
 ":="								{printf("ASSIGN\n");}
 "begin"								{printf("BEGIN\n");}
 ":"									{printf("COLON\n");}
@@ -40,14 +39,19 @@ num 				[0-9]+
 "writeln"							{printf("WRITELN\n");}
 
 
-
-
 "and"|"or"									{printf("OP1(%s)\n",yytext);}
 "<"|">"|"="|"<>"|"<="|">="					{printf("OP2(%s)\n",yytext);}
 "+"|"-"										{printf("OP3(%s)\n",yytext);}
 "*"|"/"|"mod"|"div"							{printf("OP4(%s)\n",yytext);}
 
-{letra}+({num}|{letra})*					{printf("ID(%s)\n",yytext);}
+
+
+
+
+
+
+
+{letra}({letra}|{num})*					{printf("ID(%s)\n",yytext);}
 
 
 
