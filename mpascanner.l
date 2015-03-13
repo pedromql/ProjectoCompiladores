@@ -3,12 +3,14 @@ letra				[a-z]
 num 				[0-9]+
 reserved			"abs"|"arctan"|"array"|"case"|"char"|"chr"|"const"|"cos"|"dispose"|"downto"|"eof"|"eoln"|"exp"|"file"|"for"|"get"|"goto"|"in"|"input"|"label"|"ln"|"maxint"|"new"|"nil"|"odd"|"of"|"ord"|"pack"|"packed"|"page"|"pred"|"procedure"|"put"|"read"|"readln"|"record"|"reset"|"rewrite"|"round"|"set"|"sin"|"sqr"|"sqrt"|"succ"|"text"|"to"|"trunc"|"type"|"unpack"|"with"|"write"
 
-
+      
+%X TESTECOMENT
 
 %%
 
-("(*"|"{")[^\n]*("}"|"*)")			;
-
+(("(*"|"{")[^\n]+)			{BEGIN TESTECOMENT;}
+<TESTECOMENT>("}"|"*)").     ;
+<TESTECOMENT>0			{BEGIN 0; printf("cona");}
 
 {num}								{printf("INTLIT(%s)\n",yytext);}
 {num}("."{num})?(e[-/+]?{num})?		{printf("REALLIT(%s)\n",yytext);}
@@ -49,12 +51,6 @@ reserved			"abs"|"arctan"|"array"|"case"|"char"|"chr"|"const"|"cos"|"dispose"|"d
 "*"|"/"|"mod"|"div"							{printf("OP4(%s)\n",yytext);}
 
 
-
-
-
-
-
-
 {letra}({letra}|{num})*					{printf("ID(%s)\n",yytext);}
 
 
@@ -69,17 +65,14 @@ reserved			"abs"|"arctan"|"array"|"case"|"char"|"chr"|"const"|"cos"|"dispose"|"d
 
 
 
-
-
-
-
-
-
-
 int main()
 {
 	yylex();
 	return 0;
+	/*<TESTECOMENT>[^\n]+")".				{BEGIN 0; printf("Line %d, col %d: unterminated string\n",yylineno,(int)yyleng); }
+{ BEGIN TESTECOMENT; }    		
+<TESTECOMENT>[^\n]+("}"|"*)")		; 
+*/
 }
 
 int yywrap()
