@@ -15,7 +15,6 @@ reserved			"abs"|"arctan"|"array"|"case"|"char"|"chr"|"const"|"cos"|"dispose"|"d
 %}
 
 %%
-
 ("(*")						{line_aux = line; col_aux = col; col+=2; BEGIN TESTECOMENT;}
 ("{")						{line_aux = line; col_aux = col; col++; BEGIN TESTECOMENT;}
 <TESTECOMENT>("*)")			{BEGIN 0; col+=2;}
@@ -23,6 +22,7 @@ reserved			"abs"|"arctan"|"array"|"case"|"char"|"chr"|"const"|"cos"|"dispose"|"d
 <TESTECOMENT>.				{col++;};
 <TESTECOMENT>\n				{line++; col=1;};
 <TESTECOMENT><<EOF>>		{printf("Line %d, col %lu: unterminated comment\n",line_aux,col_aux); return 0;};
+
 
 
 
@@ -68,6 +68,7 @@ reserved			"abs"|"arctan"|"array"|"case"|"char"|"chr"|"const"|"cos"|"dispose"|"d
 
 {letra}+({num}|{letra})*					{col+=yyleng; printf("ID(%s)\n",yytext);}
 
+[a-z][a-z0-9]*					{col+=yyleng; printf("ID(%s)\n",yytext);}
 
 
 
@@ -85,6 +86,7 @@ int main()
 {
 	yylex();
 	return 0;
+
 }
 
 int yywrap()
