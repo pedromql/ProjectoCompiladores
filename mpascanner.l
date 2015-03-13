@@ -3,6 +3,8 @@ letra				[a-z]
 num 				[0-9]+
 reserved			"abs"|"arctan"|"array"|"case"|"char"|"chr"|"const"|"cos"|"dispose"|"downto"|"eof"|"eoln"|"exp"|"file"|"for"|"get"|"goto"|"in"|"input"|"label"|"ln"|"maxint"|"new"|"nil"|"odd"|"of"|"ord"|"pack"|"packed"|"page"|"pred"|"procedure"|"put"|"read"|"readln"|"record"|"reset"|"rewrite"|"round"|"set"|"sin"|"sqr"|"sqrt"|"succ"|"text"|"to"|"trunc"|"type"|"unpack"|"with"|"write"
 
+      
+%X TESTECOMENT
 
 
 %{
@@ -12,6 +14,9 @@ reserved			"abs"|"arctan"|"array"|"case"|"char"|"chr"|"const"|"cos"|"dispose"|"d
 
 %%
 
+(("(*"|"{")[^\n]+)			{BEGIN TESTECOMENT;}
+<TESTECOMENT>("}"|"*)").     ;
+<TESTECOMENT>0			{BEGIN 0; printf("cona");}
 
 {num}								{col+=yyleng; printf("INTLIT(%s)\n",yytext);}
 {num}("."{num})?(e[-/+]?{num})?		{col+=yyleng; printf("REALLIT(%s)\n",yytext);}
@@ -68,17 +73,14 @@ reserved			"abs"|"arctan"|"array"|"case"|"char"|"chr"|"const"|"cos"|"dispose"|"d
 
 
 
-
-
-
-
-
-
-
 int main()
 {
 	yylex();
 	return 0;
+	/*<TESTECOMENT>[^\n]+")".				{BEGIN 0; printf("Line %d, col %d: unterminated string\n",yylineno,(int)yyleng); }
+{ BEGIN TESTECOMENT; }    		
+<TESTECOMENT>[^\n]+("}"|"*)")		; 
+*/
 }
 
 int yywrap()
