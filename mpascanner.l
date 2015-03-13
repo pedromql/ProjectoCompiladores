@@ -14,9 +14,9 @@ reserved			"abs"|"arctan"|"array"|"case"|"char"|"chr"|"const"|"cos"|"dispose"|"d
 
 %%
 
-(("(*"|"{")[^\n]+)			{BEGIN TESTECOMENT;}
-<TESTECOMENT>("}"|"*)").     ;
-<TESTECOMENT>0			{BEGIN 0; printf("cona");}
+(("(*"|"{")[^\n]+)[^\n]*			{BEGIN TESTECOMENT;}
+<TESTECOMENT>("}"|"*)")			     ;
+<TESTECOMENT>0						{BEGIN 0;} 		
 
 {num}								{col+=yyleng; printf("INTLIT(%s)\n",yytext);}
 {num}("."{num})?(e[-/+]?{num})?		{col+=yyleng; printf("REALLIT(%s)\n",yytext);}
@@ -79,7 +79,10 @@ int main()
 	return 0;
 	/*<TESTECOMENT>[^\n]+")".				{BEGIN 0; printf("Line %d, col %d: unterminated string\n",yylineno,(int)yyleng); }
 { BEGIN TESTECOMENT; }    		
-<TESTECOMENT>[^\n]+("}"|"*)")		; 
+<TESTECOMENT>[^\n]+("}"|"*)")		;
+{BEGIN TESTECOMENT;}
+<TESTECOMENT>("}"|"*)")[^\n]+     ;
+<TESTECOMENT>0				{BEGIN 0;} 
 */
 }
 
