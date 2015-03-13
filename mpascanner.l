@@ -21,7 +21,7 @@ reserved			"abs"|"arctan"|"array"|"case"|"char"|"chr"|"const"|"cos"|"dispose"|"d
 <TESTECOMENT>("*)")			{BEGIN 0; col+=2;}
 <TESTECOMENT>("}")			{BEGIN 0; col++;}
 <TESTECOMENT>.				{col++;};
-<TESTECOMENT>\n				{line++;};
+<TESTECOMENT>\n				{line++; col=1;};
 <TESTECOMENT><<EOF>>		{printf("Line %d, col %lu: unterminated comment\n",line_aux,col_aux); return 0;};
 
 
@@ -29,7 +29,7 @@ reserved			"abs"|"arctan"|"array"|"case"|"char"|"chr"|"const"|"cos"|"dispose"|"d
 {num}								{col+=yyleng; printf("INTLIT(%s)\n",yytext);}
 {num}("."{num})?(e[-/+]?{num})?		{col+=yyleng; printf("REALLIT(%s)\n",yytext);}
 "'"([^\n|']|'')*"'"					{col+=yyleng; printf("STRING(%s)\n",yytext);}
-
+"'"([^\n|']|'')*(("''")|[<<EOF>>])*				{printf("Line %d, col %lu: unterminated string\n",line,col); col+=yyleng;}
 ":="								{col+=yyleng; printf("ASSIGN\n");}
 "begin"								{col+=yyleng; printf("BEGIN\n");}
 ":"									{col+=yyleng; printf("COLON\n");}
@@ -70,7 +70,7 @@ reserved			"abs"|"arctan"|"array"|"case"|"char"|"chr"|"const"|"cos"|"dispose"|"d
 
 
 
-"'"([^\n|']|'')*("''")				{printf("Line %d, col %lu: unterminated string\n",line,col); col+=yyleng;}
+
 
 
 
@@ -85,10 +85,6 @@ int main()
 {
 	yylex();
 	return 0;
-	/*<TESTECOMENT>[^\n]+")".				{BEGIN 0; printf("Line %d, col %d: unterminated string\n",yylineno,(int)yyleng); }
-{ BEGIN TESTECOMENT; }    		
-<TESTECOMENT>[^\n]+("}"|"*)")		; 
-*/
 }
 
 int yywrap()
