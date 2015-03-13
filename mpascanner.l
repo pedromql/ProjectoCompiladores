@@ -15,12 +15,6 @@ reserved			"abs"|"arctan"|"array"|"case"|"char"|"chr"|"const"|"cos"|"dispose"|"d
 %}
 
 %%
-
-<<<<<<< HEAD
-(("(*"|"{")[^\n]+)[^\n]*			{BEGIN TESTECOMENT;}
-<TESTECOMENT>("}"|"*)")			     ;
-<TESTECOMENT>0						{BEGIN 0;} 		
-=======
 ("(*")						{line_aux = line; col_aux = col; col+=2; BEGIN TESTECOMENT;}
 ("{")						{line_aux = line; col_aux = col; col++; BEGIN TESTECOMENT;}
 <TESTECOMENT>("*)")			{BEGIN 0; col+=2;}
@@ -30,7 +24,7 @@ reserved			"abs"|"arctan"|"array"|"case"|"char"|"chr"|"const"|"cos"|"dispose"|"d
 <TESTECOMENT><<EOF>>		{printf("Line %d, col %lu: unterminated comment\n",line_aux,col_aux); return 0;};
 
 
->>>>>>> 940e30e882c2fb28b511f6c94857b179be7e9bf6
+
 
 {num}								{col+=yyleng; printf("INTLIT(%s)\n",yytext);}
 {num}("."{num})?(e[-/+]?{num})?		{col+=yyleng; printf("REALLIT(%s)\n",yytext);}
@@ -72,8 +66,8 @@ reserved			"abs"|"arctan"|"array"|"case"|"char"|"chr"|"const"|"cos"|"dispose"|"d
 "+"|"-"										{col+=yyleng; printf("OP3(%s)\n",yytext);}
 "*"|"/"|"mod"|"div"							{col+=yyleng; printf("OP4(%s)\n",yytext);}
 
-{letra}+({num}|{letra}+)*					{col+=yyleng; printf("ID(%s)\n",yytext);}
 
+[a-z][a-z0-9]*					{col+=yyleng; printf("ID(%s)\n",yytext);}
 
 
 "'"([^\n|']|'')*("''")				{printf("Line %d, col %lu: unterminated string\n",line,col); col+=yyleng;}
@@ -91,13 +85,7 @@ int main()
 {
 	yylex();
 	return 0;
-	/*<TESTECOMENT>[^\n]+")".				{BEGIN 0; printf("Line %d, col %d: unterminated string\n",yylineno,(int)yyleng); }
-{ BEGIN TESTECOMENT; }    		
-<TESTECOMENT>[^\n]+("}"|"*)")		;
-{BEGIN TESTECOMENT;}
-<TESTECOMENT>("}"|"*)")[^\n]+     ;
-<TESTECOMENT>0				{BEGIN 0;} 
-*/
+
 }
 
 int yywrap()
