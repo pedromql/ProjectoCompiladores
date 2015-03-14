@@ -66,8 +66,6 @@ reserved			"abs"|"arctan"|"array"|"case"|"char"|"chr"|"const"|"cos"|"dispose"|"d
 "+"|"-"										{col+=yyleng; printf("OP3(%s)\n",yytext);}
 "*"|"/"|"mod"|"div"							{col+=yyleng; printf("OP4(%s)\n",yytext);}
 
-{letra}+({num}|{letra})*					{col+=yyleng; printf("ID(%s)\n",yytext);}
-
 [a-z][a-z0-9]*					{col+=yyleng; printf("ID(%s)\n",yytext);}
 
 
@@ -75,8 +73,8 @@ reserved			"abs"|"arctan"|"array"|"case"|"char"|"chr"|"const"|"cos"|"dispose"|"d
 
 
 
-" "|"\t"		{col++;}	
-.		{printf("Line %d, col %lu: illegal character ('%c')\n",line,col,yytext[0]); col++;};
+" "|"\t"		{col+=yyleng;}	
+.		{printf("Line %d, col %lu: illegal character ('%s')\n",line,col,yytext); col+=yyleng;};
 \n 		{col = 1; line++;};
 %%
 
