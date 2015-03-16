@@ -27,9 +27,9 @@ reserved			"abs"|"arctan"|"array"|"case"|"char"|"chr"|"const"|"cos"|"dispose"|"d
 
 
 {num}								{col+=yyleng; printf("INTLIT(%s)\n",yytext);}
-{num}("."{num})?(e[-/+]?{num})?		{col+=yyleng; printf("REALLIT(%s)\n",yytext);}
-"'"([^\n|']|'')*"'"					{col+=yyleng; printf("STRING(%s)\n",yytext);}
-"'"([^\n|']|'')*(("''")|[<<EOF>>])*				{printf("Line %d, col %lu: unterminated string\n",line,col); col+=yyleng;}
+{num}("."{num})?(e[-+]?{num})?		{col+=yyleng; printf("REALLIT(%s)\n",yytext);}
+"'"([^\n']|'')*"'"					{col+=yyleng; printf("STRING(%s)\n",yytext);}
+"'"([^\n']|'')*(("''")|[<<EOF>>])*				{printf("Line %d, col %lu: unterminated string\n",line,col); col+=yyleng;}
 ":="								{col+=yyleng; printf("ASSIGN\n");}
 "begin"								{col+=yyleng; printf("BEGIN\n");}
 ":"									{col+=yyleng; printf("COLON\n");}
