@@ -8,6 +8,7 @@ reserved			"abs"|"arctan"|"array"|"case"|"char"|"chr"|"const"|"cos"|"dispose"|"d
 
 
 %{
+	#include "y.tab.h"
 	unsigned long col = 1;
 	unsigned long col_aux = 1;
 	int line = 1;
@@ -26,51 +27,45 @@ reserved			"abs"|"arctan"|"array"|"case"|"char"|"chr"|"const"|"cos"|"dispose"|"d
 
 
 
-{num}								{col+=yyleng; printf("INTLIT(%s)\n",yytext);}
-{num}("."{num})?(e[-+]?{num})?		{col+=yyleng; printf("REALLIT(%s)\n",yytext);}
-"'"([^\n']|'')*"'"					{col+=yyleng; printf("STRING(%s)\n",yytext);}
+{num}								{col+=yyleng; yylval.value=atoi(yytext); return INTLIT;}
+{num}("."{num})?(e[-+]?{num})?		{col+=yyleng; yylval.id=(char*)strdup(yytext); return REALLIT;}
+"'"([^\n']|'')*"'"					{col+=yyleng; yylval.id=(char*)strdup(yytext); return STRING;}
 "'"([^\n']|'')*(("''")|[<<EOF>>])*				{printf("Line %d, col %lu: unterminated string\n",line,col); col+=yyleng;}
-":="								{col+=yyleng; printf("ASSIGN\n");}
-"begin"								{col+=yyleng; printf("BEGIN\n");}
-":"									{col+=yyleng; printf("COLON\n");}
-","									{col+=yyleng; printf("COMMA\n");}
-"do"								{col+=yyleng; printf("DO\n");}
-"."									{col+=yyleng; printf("DOT\n");}
-"else"								{col+=yyleng; printf("ELSE\n");}
-"end"								{col+=yyleng; printf("END\n");}
-"forward"							{col+=yyleng; printf("FORWARD\n");}
-"function"							{col+=yyleng; printf("FUNCTION\n");}
-"if"								{col+=yyleng; printf("IF\n");}
-"("									{col+=yyleng; printf("LBRAC\n");}
-"not"								{col+=yyleng; printf("NOT\n");}
-"output"							{col+=yyleng; printf("OUTPUT\n");}
-"paramstr"							{col+=yyleng; printf("PARAMSTR\n");}
-"program"							{col+=yyleng; printf("PROGRAM\n");}
-")"									{col+=yyleng; printf("RBRAC\n");}
-"repeat"							{col+=yyleng; printf("REPEAT\n");}
-";"									{col+=yyleng; printf("SEMIC\n");}
-"then"								{col+=yyleng; printf("THEN\n");}
-"until"								{col+=yyleng; printf("UNTIL\n");}
-"val"								{col+=yyleng; printf("VAL\n");}
-"var"								{col+=yyleng; printf("VAR\n");}
-"while"								{col+=yyleng; printf("WHILE\n");}
-"writeln"							{col+=yyleng; printf("WRITELN\n");}
+":="								{col+=yyleng; return ASSIGN;}
+"begin"								{col+=yyleng; return BEGIN;}
+":"									{col+=yyleng; return COLON;}
+","									{col+=yyleng; return COMMA;}
+"do"								{col+=yyleng; return DO;}
+"."									{col+=yyleng; return DOT;}
+"else"								{col+=yyleng; return ELSE;}
+"end"								{col+=yyleng; return END;}
+"forward"							{col+=yyleng; return FORWARD;}
+"function"							{col+=yyleng; return FUNCTION;}
+"if"								{col+=yyleng; return IF;}
+"("									{col+=yyleng; return LBRAC;}
+"not"								{col+=yyleng; return NOT;}
+"output"							{col+=yyleng; return OUTPUT;}
+"paramstr"							{col+=yyleng; return PARAMSTR;}
+"program"							{col+=yyleng; return PROGRAM;}
+")"									{col+=yyleng; return RBRAC;}
+"repeat"							{col+=yyleng; return REPEAT;}
+";"									{col+=yyleng; return SEMIC;}
+"then"								{col+=yyleng; return THEN;}
+"until"								{col+=yyleng; return UNTIL;}
+"val"								{col+=yyleng; return VAL;}
+"var"								{col+=yyleng; return VAR;}
+"while"								{col+=yyleng; return WHILE;}
+"writeln"							{col+=yyleng; return WRITELN;}
 
-{reserved}							{col+=yyleng; printf("RESERVED(%s)\n",yytext);}
-
-
+{reserved}							{col+=yyleng; yylval.id=(char*)strdup(yytext); return RESERVED; }
 
 
-"and"|"or"									{col+=yyleng; printf("OP1(%s)\n",yytext);}
-"<"|">"|"="|"<>"|"<="|">="					{col+=yyleng; printf("OP2(%s)\n",yytext);}
-"+"|"-"										{col+=yyleng; printf("OP3(%s)\n",yytext);}
-"*"|"/"|"mod"|"div"							{col+=yyleng; printf("OP4(%s)\n",yytext);}
+"and"|"or"									{col+=yyleng; yylval.id=(char*)strdup(yytext);  return OP1;}
+"<"|">"|"="|"<>"|"<="|">="					{col+=yyleng; yylval.id=(char*)strdup(yytext);  return OP2;}
+"+"|"-"										{col+=yyleng; yylval.id=(char*)strdup(yytext);  return OP3;}
+"*"|"/"|"mod"|"div"							{col+=yyleng; yylval.id=(char*)strdup(yytext);  return OP4;}
 
-[a-z][a-z0-9]*					{col+=yyleng; printf("ID(%s)\n",yytext);}
-
-
-
-
+[a-z][a-z0-9]*					{col+=yyleng; yylval.id=(char*)strdup(yytext);  return ID;}
 
 
 " "|"\t"		{col+=yyleng;}	
