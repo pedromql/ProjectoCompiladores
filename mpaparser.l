@@ -45,17 +45,19 @@ reserved			"abs"|"arctan"|"array"|"case"|"char"|"chr"|"const"|"cos"|"dispose"|"d
 "var"								{col+=yyleng; 											return VAR 				;}
 "while"								{col+=yyleng; 											return WHILE 			;}
 "writeln"							{col+=yyleng; 											return WRITELN 			;}
-";"									{col+=yyleng; 											return *yytext 			;}
-")"									{col+=yyleng; 											return *yytext 			;}
-"("									{col+=yyleng; 											return *yytext 			;}
-"."									{col+=yyleng; 											return *yytext 			;}
-","									{col+=yyleng; 											return *yytext 			;}
-":"									{col+=yyleng; 											return *yytext 			;}
+";"|")"|"("|"."|","|":"				{col+=yyleng; 											return *yytext 			;}
 "and"								{col+=yyleng; 											return AND 				;}
 "or"								{col+=yyleng; 											return OR 				;}
-"<"|">"|"="|"<>"|"<="|">="			{col+=yyleng; 											return OP2 				;}
-"+"|"-"								{col+=yyleng; 											return OP3 				;}
-"*"|"/"|"mod"|"div"					{col+=yyleng; 											return OP4				;}
+"<="								{col+=yyleng; 											return LEQ 				;}
+">="								{col+=yyleng; 											return GEQ 				;}
+"<>"								{col+=yyleng; 											return NEQ 				;}
+|"="|"<"|">"						{col+=yyleng; 											return *yytext 				;}
+"+"|"-"|"*"|"/"						{col+=yyleng; 											return *yytext 				;}							
+"mod"								{col+=yyleng; 											return MOD				;}
+"div"								{col+=yyleng; 											return DIV				;}
+
+
+
 [a-z][a-z0-9]*						{col+=yyleng; yylval.str = (char*)strdup(yytext); 		return ID 				;}
 {num}								{col+=yyleng; yylval.str = (char*)strdup(yytext); 		return INTLIT			;}
 {num}("."{num})?(e[-+]?{num})?		{col+=yyleng; yylval.str = (char*)strdup(yytext); 		return REALLIT 			;}

@@ -1,10 +1,13 @@
-all: mpascanner.zip mpascanner
+all: mpaparser.zip mpaparser
 
-mpascanner.zip: mpascanner.l
-	zip mpascanner.zip mpascanner.l
+mpaparser.zip: mpaparser.y mpaparser.l
+	zip mpaparser.zip mpaparser.y mpaparser.l
 
-mpascanner: mpascanner.c
-	gcc -o mpascanner mpascanner.c -ll
+mpaparser: lex.yy.c y.tab.c
+	gcc -o mpaparser y.tab.c lex.yy.c -ll -ly
 
-mpascanner.c: mpascanner.l
-	lex -o mpascanner.c mpascanner.l
+y.tab.c: mpaparser.y
+	yacc -v -o y.tab.c -d mpaparser.y
+
+lex.yy.c: mpaparser.l
+	lex -o lex.yy.c mpaparser.l
