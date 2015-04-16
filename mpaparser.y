@@ -9,17 +9,15 @@ extern unsigned long col;
 extern char* yytext;
 void yyerror (char *s);
 
-
+//Node root = malloc((Node)*sizeof(int))
 
 %}
 
-%left OP3 OR
-%left OP4 AND
-%left NOT
+%left OR AND NOT
 
 %token BEG  //equivalente a begin para evitar conflitos com o begin das macros
 %token ASSIGN COLON COMMA DO  DOT END ELSE FORWARD FUNCTION IF LBRAC NOT OUTPUT PARAMSTR PROGRAM RBRAC
-%token REPEAT SEMIC THEN UNTIL VAL VAR WHILE WRITELN AND OR OP2 OP3 OP4 RESERVED 
+%token REPEAT SEMIC THEN UNTIL VAL VAR WHILE WRITELN AND OR  RESERVED 
 %token LEQ GEQ NEQ MOD DIV
 
 %token <str> ID
@@ -29,18 +27,17 @@ void yyerror (char *s);
 
 %nonassoc THEN
 %nonassoc ELSE
-%nonassoc OP2
+%nonassoc '<' '>' '='
+%nonassoc LEQ NEQ GEQ
 
 %union{
 	char* str;
 }
 %%
 
-Program   			: ProgHeading  ';'  ProgBlock  '.' 										
-ProgHeading			: PROGRAM ID '(' OUTPUT ')'						
+Program   			: ProgHeading  ';'  ProgBlock  '.' 		{root=make_node("Program",NULL,$1); $1->brother=$3;}								
+ProgHeading			: PROGRAM ID '(' OUTPUT ')'				{$$=}
 ProgBlock			: VarPart FuncPart StatPart						
-
-
 VarPart 			: VAR VarDeclaration ';' VarPart2				
 					|												
 VarPart2 			: VarDeclaration ';' VarPart2					
@@ -84,19 +81,31 @@ optWritelnPList 	: Expr
 					| STRING
 WritelnPList2 		: ',' optWritelnPList WritelnPList2
 					|												
-Expr  				: Expr AND Expr
-					| Expr OR Expr
-					| Expr MO
-					| Expr OP2 Expr
-					| Expr OP3 Expr
-					| Expr OP4 Expr
-					| OP3 Expr
-					| NOT Expr
-					| '(' Expr ')' 
+Expr  				: SimpleExpression
+					| SimpleExpression '=' SimpleExpression
+					| SimpleExpression '>' SimpleExpression
+					| SimpleExpression '<' SimpleExpression
+					| SimpleExpression LEQ	SimpleExpression
+					| SimpleExpression NEQ SimpleExpression
+					| SimpleExpression GEQ SimpleExpression				
+SimpleExpression 	: '+' Term
+					| '-' Term
+					| Term
+					| SimpleExpression '+' Term
+					| SimpleExpression '-' Term
+					| SimpleExpression OR Term
+Term				: Term AND Factor
+					| Term MOD Factor 
+					| Term DIV Factor 
+					| Term '*' Factor 
+					| Term '/' Factor 
+					| Factor
+Factor				: NOT Factor
+					| '(' Expr ')'
 					| INTLIT
 					| REALLIT
 					| ID ParamList
-					| ID
+					| ID 
 ParamList        	: '(' Expr repParamList ')'
 repParamList 		: ',' Expr repParamList
 					|
@@ -108,7 +117,6 @@ repParamList 		: ',' Expr repParamList
 
 void yyerror (char *s) {
      printf ("Line %d, col %d: %s: %s\n", line, (int)(col)-(int)strlen(yytext), s, yytext);
-
 }
 
 int main()

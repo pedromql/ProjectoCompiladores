@@ -51,13 +51,10 @@ reserved			"abs"|"arctan"|"array"|"case"|"char"|"chr"|"const"|"cos"|"dispose"|"d
 "<="								{col+=yyleng; 											return LEQ 				;}
 ">="								{col+=yyleng; 											return GEQ 				;}
 "<>"								{col+=yyleng; 											return NEQ 				;}
-|"="|"<"|">"						{col+=yyleng; 											return *yytext 				;}
+"="|"<"|">"							{col+=yyleng; 											return *yytext 				;}
 "+"|"-"|"*"|"/"						{col+=yyleng; 											return *yytext 				;}							
 "mod"								{col+=yyleng; 											return MOD				;}
 "div"								{col+=yyleng; 											return DIV				;}
-
-
-
 [a-z][a-z0-9]*						{col+=yyleng; yylval.str = (char*)strdup(yytext); 		return ID 				;}
 {num}								{col+=yyleng; yylval.str = (char*)strdup(yytext); 		return INTLIT			;}
 {num}("."{num})?(e[-+]?{num})?		{col+=yyleng; yylval.str = (char*)strdup(yytext); 		return REALLIT 			;}

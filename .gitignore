@@ -3,6 +3,12 @@ mpascanner
 mpascanner.c
 *.mpa
 *.txt
+y.output
+y.tab.h
+y.tab.c
+*.zip
+lexx.yy.c
+mpaparser
 mpascanner.l.orig
 .DS_Store
 .DS_Store?

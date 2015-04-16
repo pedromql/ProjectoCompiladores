@@ -70,10 +70,15 @@
      WRITELN = 286,
      OP2 = 287,
      RESERVED = 288,
-     ID = 289,
-     INTLIT = 290,
-     REALLIT = 291,
-     STRING = 292
+     LEQ = 289,
+     GEQ = 290,
+     NEQ = 291,
+     MOD = 292,
+     DIV = 293,
+     ID = 294,
+     INTLIT = 295,
+     REALLIT = 296,
+     STRING = 297
    };
 #endif
 /* Tokens.  */
@@ -108,22 +113,27 @@
 #define WRITELN 286
 #define OP2 287
 #define RESERVED 288
-#define ID 289
-#define INTLIT 290
-#define REALLIT 291
-#define STRING 292
+#define LEQ 289
+#define GEQ 290
+#define NEQ 291
+#define MOD 292
+#define DIV 293
+#define ID 294
+#define INTLIT 295
+#define REALLIT 296
+#define STRING 297
 
 
 
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 33 "mpaparser.y"
+#line 35 "mpaparser.y"
 {
 	char* str;
 }
 /* Line 1529 of yacc.c.  */
-#line 127 "y.tab.h"
+#line 137 "y.tab.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
