@@ -2,13 +2,13 @@
 
 typedef struct _node {
 	char *id;
-	Node *brother,;
+	Node *brother;
 	Node *son;
 	
 }Node;
 
 
-Node *make_node(char *name,Node *brother,Node *son){
+Node *create_node(char *name,Node *brother,Node *son){
 	
 	Node *new = malloc(sizeof(Node));
 	strcpy(new->id,name);
@@ -17,10 +17,4 @@ Node *make_node(char *name,Node *brother,Node *son){
 	return new;
 }
 
-typedef struct _node {
-	char *id;
-	Node *brother,*son;
-}Node;
-
-
-Node root = malloc((Node)*sizeof(int));
+Node root = malloc((Node)*sizeof(_node));
