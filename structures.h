@@ -7,8 +7,7 @@ typedef struct _node {
 	
 }Node;
 
-
-Node *make_node(char *name,Node *brother,Node *son){
+Node *make_node(char *name,Node *son,Node *brother){
 	
 	Node *new = malloc(sizeof(Node));
 	new->id = (char*)malloc(strlen(name)*sizeof(char));
@@ -31,9 +30,19 @@ void addChild(Node * temp, Node * child) {
 
 void printAll(Node * node) {
 	if (node == NULL) return;
-	printf("bla bla bla%s\n",node->id);
+	//printf("bla bla bla%s\n",node->id);
 	printAll(node->son);
 	printAll(node->brother);
 }
 
 
+
+
+void check_statlist(Node *temp,Node *son2){//nó da statlist
+
+	if(temp==NULL)
+		return make_node("StatList",NULL,NULL);
+	else
+		return make_node
+
+}
