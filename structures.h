@@ -8,17 +8,23 @@ typedef struct _node {
 }Node;
 
 
-Node *make_node(char *name,Node *brother,Node *son){
+Node * make_node(char *name,Node *son,Node *brother){
 	
 	Node *new = malloc(sizeof(Node));
-	new->id = (char*)malloc(strlen(name)*sizeof(char));
-	strcpy(new->id,name);
+    
+    if (name != NULL) {
+        new->id = (char*)malloc(strlen(name)*sizeof(char));
+        strcpy(new->id,name);
+    }
+    else new->id = (char*)malloc(sizeof(char));
+	
 	new->brother = brother;
 	new->son = son;
 	return new;
 }
 
 void addBrother(Node * temp, Node * brother) {
+	if (temp == NULL || brother == NULL) return;
 	while (temp->brother != NULL) {
 		temp = temp->brother;
 	}
@@ -29,11 +35,35 @@ void addChild(Node * temp, Node * child) {
 	temp->son = child;
 }
 
-void printAll(Node * node) {
+void printAll(Node * node,int level) {
+	int i;
 	if (node == NULL) return;
-	printf("bla bla bla%s\n",node->id);
-	printAll(node->son);
-	printAll(node->brother);
+	for (i = 0; i < level; i++) {
+		printf("..");
+	}
+	printf("%s\n",node->id);
+	printAll(node->son,level+1);
+	printAll(node->brother,level);
+}
+
+Node * check_statlist(Node * temp) {
+	if (temp == NULL) {
+		return make_node("StatList",NULL,NULL);
+	}
+	else if (temp->brother == NULL) {
+		return temp;
+	}
+	else {
+		return make_node("StatList",temp,NULL);
+	}
 }
 
 
+
+
+
+
+
+
+
+//final
