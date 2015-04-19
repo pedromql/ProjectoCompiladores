@@ -89,7 +89,7 @@ StatPart 			: CompStat								{$$ = check_statlist($1);};
 
 CompStat 			: BEG StatList END						{$$ = check_statlist($2);};
 
-StatList 			: Stat Stat2							{addBrother($1,$2); $$ = $1);};
+StatList 			: Stat Stat2							{addBrother($1,$2); $$ = $1;};
 
 Stat2 				: ';' Stat Stat2						{addBrother($2,$3); $$ = $2;};
 					|										{$$ = NULL;};

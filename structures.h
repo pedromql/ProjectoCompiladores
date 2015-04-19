@@ -58,14 +58,15 @@ Node * check_statlist(Node * temp) {
         int i = 0;
         Node * tmp = make_node("StatList",temp,NULL);
         Node * aux = temp;
-        while (aux->brother != NULL && strcmp(aux->brother->id,"StatList") == 0) {
+        while (aux->brother != NULL && strcmp(aux->id,"StatList") == 0) {
             aux = aux->brother;
             i++;
         }
         if (i > 0 && aux != NULL && tmp->son != NULL) {
-            if (aux->son != NULL) return tmp;
-            tmp->son = aux->brother;
-            return tmp->son;
+            if (aux->son != NULL && aux->son->brother != NULL) return aux;
+            //tmp->son = aux->brother;
+            tmp->son = NULL;
+            return tmp;
         }
         //tmp->son = aux->brother;
         return tmp;
