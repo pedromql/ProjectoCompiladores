@@ -95,8 +95,8 @@ Stat2 				: ';' Stat Stat2						{addBrother($2,$3); $$ = $2;};
 					|										{$$ = NULL;};
 
 Stat  				: CompStat 								{$$ = $1;};
-					| IF Expr THEN Stat 					{tmp = check_statlist($4); addBrother($2,tmp); addBrother(tmp,NULL); $$ = make_node("IfElse",$2,NULL);};
-					| IF Expr THEN Stat ELSE Stat 			{tmp = check_statlist($4); tmp2 = check_statlist($6); addBrother($2,tmp); addBrother(tmp,tmp2); $$ = make_node("IfElse",$2,NULL);};
+					| IF Expr THEN Stat 					{tmp = check_statlist($4); addBrother($2,tmp); addBrother(tmp,make_node("StatList",NULL,NULL)); $$ = make_node("IfElse",$2,NULL);};
+					| IF Expr THEN Stat ELSE Stat 			{tmp = check_statlist($4); tmp2 = check_statlist($6); addBrother(tmp,tmp2); addBrother($2,tmp); $$ = make_node("IfElse",$2,NULL);};
 					| WHILE Expr DO Stat 					{tmp = check_statlist($4); addBrother($2,tmp); $$ = make_node("While",$2,NULL);};
 					| REPEAT StatList UNTIL Expr 			{tmp = check_statlist($2); addBrother(tmp,$4); $$ = make_node("Repeat",tmp,NULL);};
 					| VAL '(' PARAMSTR '(' Expr ')' ',' ID ')' {aux = (char*)malloc(5+strlen($8)*sizeof(char)); sprintf(aux,"Id(%s)",$8); addBrother($5,make_node(aux,NULL,NULL)); $$ = make_node("ValParam",$5,NULL);};
@@ -174,16 +174,6 @@ int main(int argc, char * argv[]) {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
+//final
 
 
