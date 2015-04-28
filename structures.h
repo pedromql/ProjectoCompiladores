@@ -61,14 +61,17 @@ Node * check_statlist(Node * temp) {
 }
 
 Node * check_statlist2(Node * temp) {
+
     if (temp == NULL || temp->brother == NULL) {
-        return make_node("StatList",NULL,NULL);
+        return temp;
     }
     
     else {
         return make_node("StatList",temp,NULL);
         
     }
+
+
 }
 
 

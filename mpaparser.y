@@ -87,11 +87,11 @@ FuncBlock 			: VarPart StatPart 						{addBrother($1,$2); $$ = $1;};
 
 StatPart 			: CompStat								{$$ = check_statlist($1);};
 
-CompStat 			: BEG StatList END						{$$ = check_statlist($2);};
+CompStat 			: BEG StatList END						{$$ = check_statlist2($2);};
 
-StatList 			: Stat Stat2							{addBrother($1,$2); $$ = $1;};
+StatList 			: Stat Stat2							{addBrother($1,$2); if ($1 == NULL) $$ = $2; else $$ = $1;};
 
-Stat2 				: ';' Stat Stat2						{addBrother($2,$3); $$ = $2;};
+Stat2 				: ';' Stat Stat2						{addBrother($2,$3); if ($2 == NULL) $$ = $3; else $$ = $2;};
 					|										{$$ = NULL;};
 
 Stat  				: CompStat 								{$$ = $1;};
