@@ -87,7 +87,7 @@ FuncBlock 			: VarPart StatPart 						{addBrother($1,$2); $$ = $1;};
 
 StatPart 			: CompStat								{$$ = check_statlist($1);};
 
-CompStat 			: BEG StatList END						{$$ = check_statlist($2);};
+CompStat 			: BEG StatList END						{$$ = check_statlist2($2);};
 
 StatList 			: Stat Stat2							{addBrother($1,$2); $$ = $1;};
 
