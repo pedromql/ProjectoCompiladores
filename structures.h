@@ -4,11 +4,24 @@ typedef struct _node {
     char *id;
     struct _node *brother;
     struct _node *son;
+    char * type;
+    char * value;
     
 }Node;
 
 
-Node * make_node(char *name,Node *son,Node *brother){
+typedef struct _table{
+
+    char *name;
+
+
+
+
+
+}Table;
+
+
+Node * make_node(char *name,char *type,char *value,Node *son,Node *brother){
     
     Node *new = malloc(sizeof(Node));
     
@@ -18,6 +31,23 @@ Node * make_node(char *name,Node *son,Node *brother){
     }
     else new->id = (char*)malloc(sizeof(char));
     
+    if (type != NULL && value != NULL) {
+        
+        //tipo
+        new->type = (char*)malloc(strlen(type)*sizeof(char));
+        strcpy(new->type,type);
+
+        //valor
+        new->value = (char*)malloc(strlen(value)*sizeof(char));
+        strcpy(new->value,value);
+    }
+    else{
+
+        new->type = (char*)malloc(sizeof(char));
+        new->value = (char*)malloc(sizeof(char));
+
+    } 
+
     new->brother = brother;
     new->son = son;
     return new;
@@ -35,27 +65,40 @@ void addChild(Node * temp, Node * child) {
     temp->son = child;
 }
 
+
+/*
+
+
+esta funcao pode dar merda o prof aconselhou a fazer uma versao iterativa para ver os tipos dos dados
+
+
+*/
 void printAll(Node * node,int level) {
     int i;
     if (node == NULL) return;
     for (i = 0; i < level; i++) {
         printf("..");
     }
+    /*if(strcmp(node->type,"")!=0)
+            printf("%s\n type=%s, value=%s          ",node->id,node->type,node->value);
+
+    else*/
     printf("%s\n",node->id);
+
     printAll(node->son,level+1);
     printAll(node->brother,level);
 }
 
 Node * check_statlist(Node * temp) {
     if (temp == NULL ) {
-        return make_node("StatList",NULL,NULL);
+        return make_node("StatList",NULL,NULL,NULL,NULL);
     }
     else if (temp->brother == NULL) {
         return temp;
     }
     
     else {
-        return make_node("StatList",temp,NULL);
+        return make_node("StatList",NULL,NULL,temp,NULL);
         
     }
 }
@@ -67,7 +110,7 @@ Node * check_statlist2(Node * temp) {
     }
     
     else {
-        return make_node("StatList",temp,NULL);
+        return make_node("StatList",NULL,NULL,temp,NULL);
         
     }
 
