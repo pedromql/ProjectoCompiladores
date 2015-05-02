@@ -21,19 +21,22 @@ Node * make_node(char *name,char *type,char *value,Node *son,Node *brother){
     }
     else new->id = (char*)malloc(sizeof(char));
     
-    if (type != NULL && value != NULL) {
+    if (type != NULL) {
         
         //tipo
         new->type = (char*)malloc(strlen(type)*sizeof(char));
         strcpy(new->type,type);
+    }
+    else {
+        new->type = (char*)malloc(sizeof(char));
+    }
+    if (value != NULL) {
 
         //valor
         new->value = (char*)malloc(strlen(value)*sizeof(char));
         strcpy(new->value,value);
     }
     else{
-
-        new->type = (char*)malloc(sizeof(char));
         new->value = (char*)malloc(sizeof(char));
 
     } 
@@ -63,11 +66,11 @@ void printAll(Node * node,int level) {
     for (i = 0; i < level; i++) {
         printf("..");
     }
-    /*if(strcmp(node->type,"")!=0)
-            printf("%s\n type=%s, value=%s          ",node->id,node->type,node->value);
+    //if(strcmp(node->type,"")!=0)
+            printf("%s         type=%s, value=%s\n",node->id,node->type,node->value);
 
-    else*/
-    printf("%s\n",node->id);
+    //else
+    //printf("%s\n",node->id);
 
     printAll(node->son,level+1);
     printAll(node->brother,level);
