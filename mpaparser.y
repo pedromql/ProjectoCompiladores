@@ -166,15 +166,16 @@ void yyerror (char *s) {
 
 int main(int argc, char * argv[]) {
 	yyparse();
-	if ( argc > 1 && strcmp(argv[1],"-t") == 0) printAll(root,0); 
+	//if ( argc > 1 && strcmp(argv[1],"-t") == 0) printAll(root,0); 
 
 	//
-	if( argc > 1 && strcmp(argv[1],"-s") == 0) //imprime as tabelas
+	//if( argc > 1 && strcmp(argv[1],"-s") == 0) //imprime as tabelas
 		//create_table(root);
+	print_semantic(create_tables(root));
 	return 0;
 }
 
-
+	
 
 
 
