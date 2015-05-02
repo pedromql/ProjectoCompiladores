@@ -23,8 +23,8 @@ typedef struct _tablestructure{
 typedef struct _tablelines{
     char * name;
     char * type;
-    char * value;
     char * flag;
+    char * value;
     Table_lines *next; // proxima linha da tabela
 };
 
@@ -82,17 +82,32 @@ void create_tables(Node * node){
 	tabelaexterior->table_name=tables_name[outer_table];
 
 	//criar a primeira outer table
-	tabelaexterior->data=generic_outer_table();
-	insert_data(tabelaexterior->data, )
+	tabelaexterior->data=generic_lines_table();
+	insert_data(tabelaexterior->data,name[name_integer],type[type_type],flag[flag_constant],value_integer[value_integer]);
+	insert_data(tabelaexterior->data,name[name_real],type[type_type],flag[flag_constant],value_integer[value_real]);
+	insert_data(tabelaexterior->data,name[name_false],type[type_boolean],flag[flag_constant],value_integer[value_real]);
+	insert_data(tabelaexterior->data,name[name_true],type[type_boolean],flag[flag_constant],value_integer[value_true]);
+	insert_data(tabelaexterior->data,name[name_paramcount],type[type_function],NULL,NULL);
+	insert_data(tabelaexterior->data,name[name_program],type[type_program],NULL,NULL);
+
+
+	//criar function symbol table
+	create_base_structure_table(tabelaexterior);
+
+	//achar proxima posicao livre para inserir tabela program
+	Table_structure *lastTable=create_generic_table(tabelaexterior,tables_name[program_table]);
+	
+
 }
 
-Table_lines* generic_outer_table(){
+//cria estrutura base e devolve ponteiro
+Table_lines* generic_lines_table(){
 
-	Table_lines * aux=(Table_lines*)calloc(1,sizeof());
+	Table_lines * aux=(Table_lines*)calloc(1,sizeof(Table_lines));
 
 	aux->name = name[name_boolean];
 	aux->type = type[type_type];
-	aux->value = flag[flag_constant];
+	aux->flag = flag[flag_constant];
 	aux->value = value[value_boolean];
 
 	return aux;
@@ -110,12 +125,37 @@ void insert_data(Table_lines *line,char *name, char *type, char *flag, char *val
 	aux->flag=flag;
 	aux->value=value;
 	line->next=aux;
+}
+
+//cria 2 tabela generica a symbol table
+void create_base_structure_table(Table_structure * temp){
+
+	Table_structure * aux;
+	aux = (Table_structure*)calloc(1,sizeof(Table_structure));
+	aux->table_name = tables_name[function_table];
+
+	//dados em si
+	aux->data=(Table_lines*)calloc(1,sizeof(Table_lines));
+	aux->data->name = name[name_paramcount];
+	aux->data->type = type[type_integer];
+	aux->data->flag = flag[flag_return];
+	aux->data->value = NULL;
+	temp->next=aux;
 
 }
 
+//cria nova tabela "mãe" e adiciona no fim, retorna ponteiro para a ultima
+Table_structure* create_generic_table(Table_structure *temp, char* nome){
 
+	Table_structure * aux;
+	aux=(Table_structure*)calloc(1,sizeof(Table_structure));
+	aux->table_name=nome;
 
+	while(temp->next != NULL)   temp=temp->next;
 
+	temp->next=aux;
+	return temp->next;
+}
 
 
 
