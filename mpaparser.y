@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "structures.h"
-//#include "thirdfase.h"
+#include "thirdfase.h"
 
 extern int line;
 extern unsigned long col;
