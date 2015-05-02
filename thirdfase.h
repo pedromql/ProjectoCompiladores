@@ -1,6 +1,5 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include "structures.h"
 
 
 
@@ -28,6 +27,10 @@ typedef struct _tablelines{
     Table_lines *next; // proxima linha da tabela
 };
 
+
+
+
+
 //mais simplificado
 char *tables_name[] = {"===== Outer Symbol Table =====", "===== Function Symbol Table =====", "===== Program Symbol Table ====="};
 char *name[] = {"boolean", "integer", "real", "false", "true", "paramcount", "program"};
@@ -39,42 +42,54 @@ char *value[] = {"_boolean_", "_integer_", "_real_", "_true_", "_false_"};
 //enumerar as tabelas a cima para referencias
 enum{
 	//indices tabelas
-	outer_table=0;
-	function_table=1;
-	program_table=2;
+	outer_table=0,
+	function_table=1,
+	program_table=2,
 
 	//nomes
-	name_boolean=0;
-	name_integer=1;
-	name_real=2;
-	name_false=3;
-	name_true=4;
-	name_paramcount=5;
-	name_program=6;
+	name_boolean=0,
+	name_integer=1,
+	name_real=2,
+	name_false=3,
+	name_true=4,
+	name_paramcount=5,
+	name_program=6,
 
 	//indice tipos
-	type_type=0;
-	type_boolean=1;
-	type_function=2;
-	type_program=3;
-	type_integer=4;
-	type_real=5;
+	type_type=0,
+	type_boolean=1,
+	type_function=2,
+	type_program=3,
+	type_integer=4,
+	type_real=5,
 
 	//flags
-	flag_return=0;
-	flag_param=1;
-	flag_varparam=2;
-	flag_constant=3;
+	flag_return=0,
+	flag_param=1,
+	flag_varparam=2,
+	flag_constant=3,
 
 	//valores
-	value_boolean=0;
-	value_integer=1;
-	value_real=2;
-	value_true=3;
-	value_false=4;
+	value_boolean=0,
+	value_integer=1,
+	value_real=2,
+	value_true=3,
+	value_false=4
 };
 
-void create_tables(Node * node){
+
+Table_lines* generic_lines_table(void);
+void insert_data(Table_lines *,char *, char *, char *, char *);
+void create_base_structure_table(Table_structure * );
+void iterate_ast(Node *, Table_structure *, Table_structure *);
+void print_semantic(Table_structure *);
+Table_structure* create_generic_table(Table_structure *, char* );
+char *lower_case(char * );
+void print_semantic(Table_structure *);
+
+
+
+Table_structure *  create_tables(Node * node){
 
 	//criar espaço para base
 	Table_structure * tabelaexterior;
@@ -83,10 +98,10 @@ void create_tables(Node * node){
 
 	//criar a primeira outer table
 	tabelaexterior->data=generic_lines_table();
-	insert_data(tabelaexterior->data,name[name_integer],type[type_type],flag[flag_constant],value_integer[value_integer]);
-	insert_data(tabelaexterior->data,name[name_real],type[type_type],flag[flag_constant],value_integer[value_real]);
-	insert_data(tabelaexterior->data,name[name_false],type[type_boolean],flag[flag_constant],value_integer[value_real]);
-	insert_data(tabelaexterior->data,name[name_true],type[type_boolean],flag[flag_constant],value_integer[value_true]);
+	insert_data(tabelaexterior->data,name[name_integer],type[type_type],flag[flag_constant],value[value_integer]);
+	insert_data(tabelaexterior->data,name[name_real],type[type_type],flag[flag_constant],value[value_real]);
+	insert_data(tabelaexterior->data,name[name_false],type[type_boolean],flag[flag_constant],value[value_real]);
+	insert_data(tabelaexterior->data,name[name_true],type[type_boolean],flag[flag_constant],value[value_true]);
 	insert_data(tabelaexterior->data,name[name_paramcount],type[type_function],NULL,NULL);
 	insert_data(tabelaexterior->data,name[name_program],type[type_program],NULL,NULL);
 
@@ -97,11 +112,14 @@ void create_tables(Node * node){
 	//achar proxima posicao livre para inserir tabela program
 	Table_structure *lastTable=create_generic_table(tabelaexterior,tables_name[program_table]);
 	
+	iterate_ast(node, tabelaexterior, lastTable);
+
+	return tabelaexterior;
 
 }
 
 //cria estrutura base e devolve ponteiro
-Table_lines* generic_lines_table(){
+Table_lines* generic_lines_table(void){
 
 	Table_lines * aux=(Table_lines*)calloc(1,sizeof(Table_lines));
 
@@ -159,7 +177,7 @@ Table_structure* create_generic_table(Table_structure *temp, char* nome){
 * Adds a new line after the last one
 * Sets new line contents to be equal to the arguments
 */
-Table_lines * first_line(Table_lines *line, char *name, char *type, char *flag, char *value){
+Table_lines * first_line(char *name, char *type, char *flag, char *value){
 	Table_lines * new = (Table_lines *)malloc(sizeof(Table_lines));
 
 	new->name = name;
@@ -170,10 +188,6 @@ Table_lines * first_line(Table_lines *line, char *name, char *type, char *flag, 
 
 	return new;
 }
-
-	
-
-
 
 
 void iterate_ast(Node *root, Table_structure *table_struct, Table_structure *last_position){
@@ -265,7 +279,7 @@ void iterate_ast(Node *root, Table_structure *table_struct, Table_structure *las
 		}
 
 		else if(strcmp(root->type, "FuncDecl") == 0){
-			aux = create_generic_table(table_struct, table_name[function_table]);
+			aux = create_generic_table(table_struct, tables_name[function_table]);
 
 			value = check_var(root->son->brother->brother->value);
 
@@ -364,16 +378,32 @@ char *lower_case(char * string){
 }
 
 
+void print_semantic(Table_structure *temp){
+	while(temp != NULL){
+		printf("%s\n", temp->table_name);
 
+		while(temp->data != NULL){
+			printf("%s\t%s", temp->data->name, temp->data->type);
 
+			if(temp->data->flag != NULL){
+				printf("\t%s", temp->data->flag);
 
+				if(temp->data->value != NULL){
+					printf("\t%s", temp->data->value);
+				}
+			} 
 
+			printf("\n");
+			temp->data = temp->data->next;
+		}
+		
+		temp = temp->next;
 
-
-
-
-
-
+		if(temp != NULL){
+			printf("\n");
+		}
+	}
+}
 
 
 

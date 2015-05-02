@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "structures.h"
-//#include "thirdfase.h"
+#include "thirdfase.h"
 
 extern int line;
 extern unsigned long col;
@@ -166,15 +166,16 @@ void yyerror (char *s) {
 
 int main(int argc, char * argv[]) {
 	yyparse();
-	if ( argc > 1 && strcmp(argv[1],"-t") == 0) printAll(root,0); 
+	//if ( argc > 1 && strcmp(argv[1],"-t") == 0) printAll(root,0); 
 
 	//
-	if( argc > 1 && strcmp(argv[1],"-s") == 0) //imprime as tabelas
+	//if( argc > 1 && strcmp(argv[1],"-s") == 0) //imprime as tabelas
 		//create_table(root);
+	print_semantic(create_tables(root));
 	return 0;
 }
 
-
+	
 
 
 
