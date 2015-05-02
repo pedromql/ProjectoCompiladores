@@ -193,7 +193,7 @@ Table_lines * first_line(char *name, char *type, char *flag, char *value){
 void iterate_ast(Node *root, Table_structure *table_struct, Table_structure *last_position){
 	Table_structure *aux;
 	Node *temp;
-	int value;
+	int value_type;
 
 	if(root != NULL){
 		if(strcmp(root->type, "VarDecl") == 0){
@@ -203,15 +203,15 @@ void iterate_ast(Node *root, Table_structure *table_struct, Table_structure *las
 				temp = temp->brother;
 			}
 
-			value = check_var(temp->value); //get value type
+			value_type = check_var(temp->value); //get value type
 
 			while(root->son->brother != NULL){
 				if(last_position->data == NULL){ //if there is no line yet
-					last_position->data = first_line(lower_case(root->son->value), type[value], NULL, NULL);
+					last_position->data = first_line(lower_case(root->son->value), value[value_type], NULL, NULL);
 				}
 
 				else{ //insert last position
-					insert_data(last_position->data, lower_case(root->son->value), type[value], NULL, NULL);
+					insert_data(last_position->data, lower_case(root->son->value), value[value_type], NULL, NULL);
 				}
 
 				root->son = root->son->brother;
@@ -239,9 +239,9 @@ void iterate_ast(Node *root, Table_structure *table_struct, Table_structure *las
 		else if(strcmp(root->type, "FuncDef") == 0){
 			aux = create_generic_table(table_struct, tables_name[function_table]);
 
-			value = check_var(root->son->brother->brother->value);
+			value_type = check_var(root->son->brother->brother->value);
 
-			aux->data = first_line(lower_case(root->son->value), type[value], flag[flag_return], NULL);
+			aux->data = first_line(lower_case(root->son->value), value[value_type], flag[flag_return], NULL);
 
 			if(root->son->brother->son != NULL){
 				temp = root->son->brother->son->son;
@@ -250,12 +250,12 @@ void iterate_ast(Node *root, Table_structure *table_struct, Table_structure *las
 					temp = temp->brother;
 				}			
 
-				value = check_var(temp->value);
+				value_type = check_var(temp->value);
 
 				temp = root->son->brother->son->son;
 
 				while(temp->brother != NULL){
-					insert_data(aux->data, lower_case(temp->value), type[value], flag[flag_param], NULL);
+					insert_data(aux->data, lower_case(temp->value), value[value_type], flag[flag_param], NULL);
 					temp = temp->brother;
 				}
 			}
@@ -267,12 +267,12 @@ void iterate_ast(Node *root, Table_structure *table_struct, Table_structure *las
 					temp = temp->brother;
 				}			
 
-				value = check_var(temp->value);
+				value_type = check_var(temp->value);
 
 				temp = root->son->brother->brother->brother->son->son;
 
 				while(temp->brother != NULL){
-					insert_data(aux->data, lower_case(temp->value), type[value], flag[flag_varparam], NULL);
+					insert_data(aux->data, lower_case(temp->value), value[value_type], flag[flag_varparam], NULL);
 					temp = temp->brother;
 				}
 			}
@@ -281,9 +281,9 @@ void iterate_ast(Node *root, Table_structure *table_struct, Table_structure *las
 		else if(strcmp(root->type, "FuncDecl") == 0){
 			aux = create_generic_table(table_struct, tables_name[function_table]);
 
-			value = check_var(root->son->brother->brother->value);
+			value_type = check_var(root->son->brother->brother->value);
 
-			aux->data = first_line(lower_case(root->son->value), type[value], flag[flag_return], NULL);
+			aux->data = first_line(lower_case(root->son->value), value[value_type], flag[flag_return], NULL);
 
 			if(root->son->brother->son != NULL){
 				temp = root->son->brother->son->son;
@@ -292,12 +292,12 @@ void iterate_ast(Node *root, Table_structure *table_struct, Table_structure *las
 					temp = temp->brother;
 				}			
 
-				value = check_var(temp->value);
+				value_type = check_var(temp->value);
 
 				temp = root->son->brother->son->son;
 
 				while(temp->brother != NULL){
-					insert_data(aux->data, lower_case(temp->value), type[value], flag[flag_param], NULL);
+					insert_data(aux->data, lower_case(temp->value), value[value_type], flag[flag_param], NULL);
 					temp = temp->brother;
 				}
 			}
@@ -306,7 +306,7 @@ void iterate_ast(Node *root, Table_structure *table_struct, Table_structure *las
 		/*else if(strcmp(root->type, "FuncDef2") == 0){
 			aux = declaration_table(table_struct, table_name[FunctionSymbolTable]);
 
-			aux->data = first_line(lower_case(root->son->value), type[_type_], flag[Return], NULL);
+			aux->data = first_line(lower_case(root->son->value), value[_type_], flag[Return], NULL);
 
 			if(root->son->brother->son != NULL){
 				temp = root->son->brother->son->son;
@@ -315,12 +315,12 @@ void iterate_ast(Node *root, Table_structure *table_struct, Table_structure *las
 					temp = temp->brother;
 				}			
 
-				value = check_var(temp->value);
+				value_type = check_var(temp->value);
 
 				temp = root->son->brother->son->son;
 
 				while(temp->brother != NULL){
-					insert_data(aux->data, lower_case(temp->value), type[value], flag[VarParam], NULL);
+					insert_data(aux->data, lower_case(temp->value), value[value_type], flag[VarParam], NULL);
 					temp = temp->brother;
 				}
 			}
@@ -332,12 +332,12 @@ void iterate_ast(Node *root, Table_structure *table_struct, Table_structure *las
 					temp = temp->brother;
 				}			
 
-				value = check_var(temp->value);
+				value_type = check_var(temp->value);
 
 				temp = root->son->brother->brother->brother->son->son;
 
 				while(temp->brother != NULL){
-					insert_data(aux->data, lower_case(temp->value), type[value], flag[VarParam], NULL);
+					insert_data(aux->data, lower_case(temp->value), value[value_type], flag[VarParam], NULL);
 					temp = temp->brother;
 				}
 			}
@@ -352,16 +352,16 @@ void iterate_ast(Node *root, Table_structure *table_struct, Table_structure *las
 }
 
 
-int check_var(char * value) {
-	if(strcmp(lower_case(value), "boolean") == 0){
+int check_var(char * string) {
+	if(strcmp(lower_case(string), "boolean") == 0){
 		return value_boolean;
 	}
 
-	else if(strcmp(lower_case(value), "integer") == 0){
+	else if(strcmp(lower_case(string), "integer") == 0){
 		return value_integer;
 	}
 
-	else if(strcmp(lower_case(value), "real") == 0){
+	else if(strcmp(lower_case(string), "real") == 0){
 		return value_real;
 	}
 
