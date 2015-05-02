@@ -1,6 +1,7 @@
 #include <stdlib.h>
 
 typedef struct _node {
+    
     char *id;
     struct _node *brother;
     struct _node *son;
@@ -8,17 +9,6 @@ typedef struct _node {
     char * value;
     
 }Node;
-
-
-typedef struct _table{
-
-    char *name;
-
-
-
-
-
-}Table;
 
 
 Node * make_node(char *name,char *type,char *value,Node *son,Node *brother){
@@ -64,14 +54,8 @@ void addBrother(Node * temp, Node * brother) {
 void addChild(Node * temp, Node * child) {
     temp->son = child;
 }
-
-
 /*
-
-
 esta funcao pode dar merda o prof aconselhou a fazer uma versao iterativa para ver os tipos dos dados
-
-
 */
 void printAll(Node * node,int level) {
     int i;
@@ -113,8 +97,6 @@ Node * check_statlist2(Node * temp) {
         return make_node("StatList",NULL,NULL,temp,NULL);
         
     }
-
-
 }
 
 
