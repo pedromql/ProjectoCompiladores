@@ -29,6 +29,9 @@ typedef struct _tablelines{
 }TableLines;
 
 
+
+
+
 //mais simplificado
 char *tables_name[] = {"===== Outer Symbol Table =====", "===== Function Symbol Table =====", "===== Program Symbol Table ====="};
 char *name[] = {"boolean", "integer", "real", "false", "true", "paramcount", "program"};
@@ -96,6 +99,9 @@ void check_for_duplicates(Table_structure *, char * );
 
 
 
+
+
+
 Table_structure * create_tables(Node * node){
     
     //criar espaço para base
@@ -121,7 +127,8 @@ Table_structure * create_tables(Node * node){
     
     ast(node, tabelaexterior, lastTable);
     
-    return tabelaexterior;   
+    return tabelaexterior;
+    
 }
 
 //cria estrutura base e devolve ponteiro
@@ -240,7 +247,8 @@ void varDecl_funtion(Node * parent, Table_structure *last_table) {
         temp = temp->brother;
     }
     variable_type = check_var(temp->value); //get the variable type
-       
+    
+    
     while(var_nodes->brother != NULL) { //iterate through all variables
         if (last_table->data == NULL) { //if last_table has no data yet, a first line is created
             last_table->data = first_line(lower_case(var_nodes->value), value[variable_type], NULL, NULL);
@@ -254,6 +262,7 @@ void varDecl_funtion(Node * parent, Table_structure *last_table) {
 			insert_data(last_table->data, lower_case(parent->son->value), value[variable_type], NULL, NULL);
             insert_data(last_table->data, lower_case(var_nodes->value), value[variable_type], NULL,NULL);
         }
+        
         var_nodes = var_nodes->brother;
     }
 }
@@ -311,47 +320,67 @@ void funcDef_function(Node * parent, Table_structure * first_table) {
 
     }
     if (parent->son->brother->brother->brother->son != NULL) { //checks if function has varPart->varDecl
-        temp = parent->son->brother->brother->brother->son->son; //temp is the first var
+        too_many_params = parent->son->brother->brother->brother->son;
         
-        while (temp->brother != NULL) { //gets to last id to get the var type
-            temp = temp->brother;
+        while (too_many_params != NULL) {
+            temp = too_many_params->son; //temp is the first var
+            
+            while (temp->brother != NULL) { //gets to last id to get the var type
+                temp = temp->brother;
+            }
+            
+            variable_type = check_var(temp->value); //saves the variable type
+            
+            temp = too_many_params->son; //temp is the first var again
+            
+            while (temp->brother != NULL) { //add variables to the with it's name and type
+                insert_data(new_table->data, lower_case(temp->value), value[variable_type], NULL, NULL);
+                temp = temp->brother;
+            }
+            
+            too_many_params = too_many_params->brother;
         }
         
-        variable_type = check_var(temp->value); //saves the variable type
-        
-        temp = parent->son->brother->brother->brother->son->son; //temp is the first var again
-        
-        while (temp->brother != NULL) { //add variables to the with it's name and type
-            insert_data(new_table->data, lower_case(temp->value), value[variable_type], NULL, NULL);
-            temp = temp->brother;
-        }
-    } 
+    }
+    
 }
 
 void funcDecl_function(Node * parent, Table_structure * first_table) {
     Table_structure * new_table = create_generic_table(first_table, tables_name[function_table]);
     
     Node * temp;
+    Node * too_many_params;
     
     int variable_type = check_var(parent->son->brother->brother->value); //gets the function return type
     
     new_table->data = first_line(lower_case(parent->son->value), value[variable_type], flag[flag_return], NULL); //creates the first line with the function name (root->son->value) and it's return variable type
     
     if (parent->son->brother->son != NULL ) { //checks if function has params (funcdecl->id(max)->funcparams->params)
-        temp = parent->son->brother->son->son; //sets temp as the first parameter
-        
-        while (temp->brother != NULL) { //goes to last brother that has the variables type
-            temp = temp->brother;
+        too_many_params = parent->son->brother->son;
+
+        while (too_many_params != NULL) {
+
+        	temp = too_many_params->son; //sets temp as the first parameter
+        	
+        	while (temp->brother != NULL) { //goes to last brother that has the variables type
+        	    temp = temp->brother;
+        	}
+        	
+        	variable_type = check_var(temp->value); //saves the variables type
+        	
+        	temp = too_many_params->son; //temp is the first paramenter again
+        	
+        	while (temp->brother != NULL) { //iterate through all the variables and add to the table
+        	    if (strcmp(too_many_params->type,"VarParams") == 0) insert_data(new_table->data, lower_case(temp->value), value[variable_type], flag[flag_varparam], NULL);
+        	    else insert_data(new_table->data, lower_case(temp->value), value[variable_type], flag[flag_param], NULL); //adds the variable to the table with its name and type
+        	    temp = temp->brother;
+        	}
+
+
+        	too_many_params = too_many_params->brother;
         }
+
         
-        variable_type = check_var(temp->value); //saves the variables type
-        
-        temp = parent->son->brother->son->son; //temp is the first paramenter again
-        
-        while (temp->brother != NULL) { //iterate through all the variables and add to the table
-            insert_data(new_table->data, lower_case(temp->value), value[variable_type], flag[flag_param], NULL); //adds the variable to the table with its name and type
-            temp = temp->brother;
-        }
     }
 }
 
