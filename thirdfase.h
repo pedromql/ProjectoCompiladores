@@ -85,7 +85,7 @@ void print_tables(Table_structure *);
 int check_var(char * );
 void varDecl_funtion(Node * , Table_structure *, Table_structure *);
 void funcPart_function(Node * , Table_structure  *);
-void funcDef_function(Node * , Table_structure * , Table_structure *);
+void funcDef_function(Node * , Table_structure * );
 void funcDecl_function(Node * , Table_structure * );
 void funcDef2_function(Node * , Table_structure * );
 void check_for_duplicates(Table_structure *, char * ,int ,int);
@@ -207,7 +207,7 @@ void ast(Node * root, Table_structure * first_table, Table_structure * last_tabl
             
         }
         else if (strcmp(root->type, "FuncDef") == 0) {
-            funcDef_function(root, first_table,last_table);//falta
+            funcDef_function(root, first_table);//falta
             
         }
         else if (strcmp(root->type, "FuncDecl") == 0) {
@@ -283,11 +283,12 @@ void funcPart_function(Node * parent, Table_structure  *last_table) {
 }
 
 void funcDef_function(Node * parent, Table_structure * first_table) {
-    Table_structure * new_table = create_generic_table(first_table, tables_name[function_table]);
     
+    Table_structure * new_table = create_generic_table(first_table, tables_name[function_table]);
     Node * temp;
     Node * too_many_params;
     char * compareduplicates;
+    char * compareTypeValue;
     
     int variable_type = check_var(parent->son->brother->brother->value); //variable_type is the 3rd son of the funcDef
     
@@ -305,6 +306,11 @@ void funcDef_function(Node * parent, Table_structure * first_table) {
                 }
                 
                 variable_type = check_var(temp->value); //saves variable type
+
+                //cenas para comparar os erros
+                compareTypeValue=(char *)calloc(1, sizeof(char));
+   				strcpy(compareTypeValue, temp->value);
+
                 
                 temp = too_many_params->son; //temp equals first id parameter again
                 
@@ -316,9 +322,10 @@ void funcDef_function(Node * parent, Table_structure * first_table) {
 						strcpy(compareduplicates, temp->value);
 						check_for_duplicates(new_table,lower_case(temp->value),temp->line, temp->col);
                     	//se nao saiu é porque nao ha duplicados
-
+						///
                     	Node *aux=parent;
-						check_symbol_not_defined(aux,first_table,last_table,compareTypeValue);
+						check_symbol_not_defined(aux,first_table,new_table,compareTypeValue);
+						///_____________________________________________________________________________________
 
                     	insert_data(new_table->data, lower_case(temp->value), value[variable_type], flag[flag_varparam], NULL);
                     }
@@ -330,6 +337,9 @@ void funcDef_function(Node * parent, Table_structure * first_table) {
 							//se nao saiu é porque nao ha duplicados
                     		
                     		//ver symbol not defined
+                    		Node *aux=parent;
+							check_symbol_not_defined(aux,first_table,new_table,compareTypeValue);
+							///________________________________________________________________________________
 
                     		insert_data(new_table->data, lower_case(temp->value), value[variable_type], flag[flag_param], NULL);
                     }
@@ -372,6 +382,7 @@ void funcDecl_function(Node * parent, Table_structure * first_table) {
     
     Node * temp;
     Node * too_many_params;
+    char * compareTypeValue;
     
     int variable_type = check_var(parent->son->brother->brother->value); //gets the function return type
     
@@ -389,13 +400,31 @@ void funcDecl_function(Node * parent, Table_structure * first_table) {
         	}
         	
         	variable_type = check_var(temp->value); //saves the variables type
+
+        	compareTypeValue=(char *)calloc(1, sizeof(char));
+   			strcpy(compareTypeValue, temp->value);
+
+                
         	
         	temp = too_many_params->son; //temp is the first paramenter again
         	
         	while (temp->brother != NULL) { //iterate through all the variables and add to the table
-        	    if (strcmp(too_many_params->type,"VarParams") == 0) insert_data(new_table->data, lower_case(temp->value), value[variable_type], flag[flag_varparam], NULL);
-        	    else insert_data(new_table->data, lower_case(temp->value), value[variable_type], flag[flag_param], NULL); //adds the variable to the table with its name and type
-        	    temp = temp->brother;
+        	    if (strcmp(too_many_params->type,"VarParams") == 0) {
+
+        	    	Node *aux=parent;
+					check_symbol_not_defined(aux,first_table,new_table,compareTypeValue);
+
+
+        	    	insert_data(new_table->data,lower_case(temp->value), value[variable_type], flag[flag_varparam], NULL);
+        	    }
+        	    else {
+
+        	    	Node *aux=parent;
+					check_symbol_not_defined(aux,first_table,new_table,compareTypeValue);
+
+	        	    insert_data(new_table->data, lower_case(temp->value), value[variable_type], flag[flag_param], NULL); //adds the variable to the table with its name and type
+	        	    temp = temp->brother;
+        		}
         	}
 
 
