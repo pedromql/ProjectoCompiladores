@@ -7,11 +7,13 @@ typedef struct _node {
     struct _node *son;
     char * type;
     char * value;
+    int line;
+    int col;
     
 }Node;
 
 
-Node * make_node(char *name,char *type,char *value,Node *son,Node *brother){
+Node * make_node(char *name,char *type,char *value,Node *son,Node *brother, int line, int col){
     
     Node *new = malloc(sizeof(Node));
     
@@ -43,6 +45,9 @@ Node * make_node(char *name,char *type,char *value,Node *son,Node *brother){
 
     new->brother = brother;
     new->son = son;
+    new->line = line;
+    new->col = col;
+
     return new;
 }
 
@@ -76,28 +81,28 @@ void printAll(Node * node,int level) {
     printAll(node->brother,level);
 }
 
-Node * check_statlist(Node * temp) {
+Node * check_statlist(Node * temp, int line, int col) {
     if (temp == NULL ) {
-        return make_node("StatList",NULL,NULL,NULL,NULL);
+        return make_node("StatList",NULL,NULL,NULL,NULL,line,col);
     }
     else if (temp->brother == NULL) {
         return temp;
     }
     
     else {
-        return make_node("StatList",NULL,NULL,temp,NULL);
+        return make_node("StatList",NULL,NULL,temp,NULL,line,col);
         
     }
 }
 
-Node * check_statlist2(Node * temp) {
+Node * check_statlist2(Node * temp, int line, int col) {
 
     if (temp == NULL || temp->brother == NULL) {
         return temp;
     }
     
     else {
-        return make_node("StatList",NULL,NULL,temp,NULL);
+        return make_node("StatList",NULL,NULL,temp,NULL,line,col);
         
     }
 }
