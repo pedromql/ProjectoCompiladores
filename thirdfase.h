@@ -29,9 +29,6 @@ typedef struct _tablelines{
 }TableLines;
 
 
-
-
-
 //mais simplificado
 char *tables_name[] = {"===== Outer Symbol Table =====", "===== Function Symbol Table =====", "===== Program Symbol Table ====="};
 char *name[] = {"boolean", "integer", "real", "false", "true", "paramcount", "program"};
@@ -95,9 +92,7 @@ void funcPart_function(Node * , Table_structure  *);
 void funcDef_function(Node * , Table_structure * );
 void funcDecl_function(Node * , Table_structure * );
 void funcDef2_function(Node * , Table_structure * );
-
-
-
+void check_for_duplicates(Table_structure *, char * );
 
 
 
@@ -126,8 +121,7 @@ Table_structure * create_tables(Node * node){
     
     ast(node, tabelaexterior, lastTable);
     
-    return tabelaexterior;
-    
+    return tabelaexterior;   
 }
 
 //cria estrutura base e devolve ponteiro
@@ -203,6 +197,9 @@ Table_lines * first_line(char *name, char *type, char *flag, char *value){
 }
 
 void ast(Node * root, Table_structure * first_table, Table_structure * last_table) {
+   
+	Table_structure * temp_first_table=first_table;
+
     if (root != NULL) {
         if (strcmp(root->type, "VarDecl") == 0) {
             varDecl_funtion(root, last_table);
@@ -233,24 +230,30 @@ void ast(Node * root, Table_structure * first_table, Table_structure * last_tabl
 }
 
 void varDecl_funtion(Node * parent, Table_structure *last_table) {
+  
     Node * temp = parent->son; //node temp is the first occurrence of a id
     Node * var_nodes = parent->son; //first variable
     int variable_type;
+    char * compareduplicates;
     
     while(temp->brother != NULL)  {//get to last brother
         temp = temp->brother;
     }
     variable_type = check_var(temp->value); //get the variable type
-    
-    
+       
     while(var_nodes->brother != NULL) { //iterate through all variables
         if (last_table->data == NULL) { //if last_table has no data yet, a first line is created
             last_table->data = first_line(lower_case(var_nodes->value), value[variable_type], NULL, NULL);
         }
         else { //the function called inserts the new var at the end of the table
+
+			compareduplicates = (char *)calloc(1, sizeof(char));//alocar para novo simbolo
+			strcpy(compareduplicates, parent->son->value);
+			check_for_duplicates(last_table,lower_case(parent->son->value));
+			//se nao saiu é porque nao ha duplicados
+			insert_data(last_table->data, lower_case(parent->son->value), value[variable_type], NULL, NULL);
             insert_data(last_table->data, lower_case(var_nodes->value), value[variable_type], NULL,NULL);
         }
-        
         var_nodes = var_nodes->brother;
     }
 }
@@ -322,8 +325,7 @@ void funcDef_function(Node * parent, Table_structure * first_table) {
             insert_data(new_table->data, lower_case(temp->value), value[variable_type], NULL, NULL);
             temp = temp->brother;
         }
-    }
-    
+    } 
 }
 
 void funcDecl_function(Node * parent, Table_structure * first_table) {
@@ -412,7 +414,6 @@ char *lower_case(char * string){
     return string;
 }
 
-
 void print_tables(Table_structure *first_table){
     Table_structure * temp = first_table;
     
@@ -442,8 +443,22 @@ void print_tables(Table_structure *first_table){
     }
 }
 
-
-
+void check_for_duplicates(Table_structure *last, char * s){
+	Table_lines * new = last->data;//é preciso copiar para nao perder o contexto dos ponteiros
+	int global=0;
+	while( new != NULL){
+		
+		if(strcmp(s,new->name)==0){
+			global=1;
+			break;
+		}
+		new=new->next;
+	}
+	if(global){
+		error_symbolalareadydefined(s);	
+		exit(0);
+	}
+}
 
 
 
