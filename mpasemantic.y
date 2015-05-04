@@ -177,30 +177,81 @@ int main(int argc, char * argv[]) {
 
 	return 0;
 }
-//sdfs
 
 
+/*tratamento de erros, as funcoes retorna 1 se tiverem erros 
+	
+	1-> tipo de dados impresso como aparece na tabela
+	2-> os tokens são impressos da mesma maneira que são lidos
+	3-> NOS STATEMENTS (if, while, repeat-until e val-paramstr) DEVERAO ESTAR EM MINUSCULAS CARALHO!!!!!!!
 
-//sdfsd
-
-
-//testevarprams
-
-//sfsdgfsf
-
-
-
-//sdfdsf
-
-//sdfgsdf
-
-
-
-
-
-
-
-
+*/
+//Cannot write values of type <type>
+int error_cannotwritevalues(char* type){
+	printf("Line %d, col %d: Cannot write values of type %s\n", line, (int)(col)-(int)strlen(yytext), type);	
+	return 0;
+}	
+//Function identifier expected
+int error_unctionidentifierexpected(void){
+	printf("Line %d, col %d: Function identifier expected\n", line, (int)(col)-(int)strlen(yytext));
+	return 0;
+}
+//Incompatible type for argument <num> in call to function <token> (got <type>, expected <type>)
+int error_incompatibletypeforargument(char *s, char * function_name, char *got, char *expected){
+	printf("Line %d, col %d: Incompatible type for argument %d in call to function %s (got %s, expected %s)\n", line, (int)(col)-(int)strlen(yytext),s ,function_name,got,expected);
+	return 0;
+}
+//Incompatible type in assigment to <token> (got <type>, expected <type>)
+int  error_incompatibletypeassigment(char * token, char* got, char * expected){
+	printf("Line %d, col %d: Incompatible type in assigment to %s (got %s, expected %s)\n", line, (int)(col)-(int)strlen(yytext),token,got,expected);
+	return 0;
+}
+//Incompatible type in <statement> statement (got <type>, expected <type>)
+int  error_incompatibletypestatement(char * token, char* got, char * expected){
+	printf("Line %d, col %d: Incompatible type in %s statement (got %s, expected %s)\n", line, (int)(col)-(int)strlen(yytext),token,got,expected);
+	return 0;
+}
+//Operator <token> cannot be applied to type <type>
+int  error_operatornotappliedtotype(char * operator, char* type){
+	printf("Line %d, col %d: Operator %s cannot be applied to type %s\n", line, (int)(col)-(int)strlen(yytext),operator,type);
+	return 0;
+}
+//Operator <token> cannot be applied to types <type>, <type>			Parecido com o de cima, cuidado
+int  error_operatornotappliedtotypes(char * operator, char * type1, char * type2){
+	printf("Line %d, col %d: Operator %s cannot be applied to types %s, %s\n", line, (int)(col)-(int)strlen(yytext),operator,type1,type2);
+	return 0;
+}
+//Symbol <token> already defined
+int error_symbolalareadydefined(char * symbol){
+	printf("Line %d, col %d: Symbol %s already defined\n", line, (int)(col)-(int)strlen(yytext),symbol);
+return 0;
+}
+//Symn> not defined
+int  error_symbolnotdefined(char * symbol){
+	printf("Line %d, col %d: Symbol %s not defined\n", line, (int)(col)-(int)strlen(yytext),symbol);
+	return 0;
+}
+//Type identifier expected
+int  error_typeidentifierexpected(void){
+	printf("Line %d, col %d: Type identifier expected\n", line, (int)(col)-(int)strlen(yytext));
+	return 0;
+}
+//Variable identifier expected
+int  error_variableidentifierexpected(void){
+	printf("Line %d, col %d: Variable identifier expected\n", line, (int)(col)-(int)strlen(yytext));
+	return 0;
+}
+//Wrong number of arguments in call to function <token> (got <type>, expected <type>)
+int  error_wrongnumberofarguments(char * function_name, char* got, char * expected){
+	printf("Line %d, col %d: Wrong number of arguments in call to function %s (got %s, expected %s)\n", line, (int)(col)-(int)strlen(yytext),function_name,got,expected);
+	return 0;
+}
+//aljhsbdkjabsdohbaosdhb
+/*as
+da
+sd
+as
+d+7+*/
 //final
 
 
