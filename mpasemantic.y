@@ -198,7 +198,7 @@ int error_unctionidentifierexpected(void){
 }
 //Incompatible type for argument <num> in call to function <token> (got <type>, expected <type>)
 int error_incompatibletypeforargument(char *s, char * function_name, char *got, char *expected){
-	printf("Line %d, col %d: Incompatible type for argument %d in call to function %s (got %s, expected %s)\n", line, (int)(col)-(int)strlen(yytext),s ,function_name,got,expected);
+	printf("Line %d, col %d: Incompatible type for argument %s in call to function %s (got %s, expected %s)\n", line, (int)(col)-(int)strlen(yytext),s ,function_name,got,expected);
 	return 0;
 }
 //Incompatible type in assigment to <token> (got <type>, expected <type>)
@@ -223,16 +223,8 @@ int  error_operatornotappliedtotypes(char * operator, char * type1, char * type2
 }
 
 
-//Symn> not defined
-int  error_symbolnotdefined(char * symbol){
-	printf("Line %d, col %d: Symbol %s not defined\n", line, (int)(col)-(int)strlen(yytext),symbol);
-	return 0;
-}
-//Type identifier expected
-int  error_typeidentifierexpected(void){
-	printf("Line %d, col %d: Type identifier expected\n", line, (int)(col)-(int)strlen(yytext));
-	return 0;
-}
+
+
 //Variable identifier expected
 int  error_variableidentifierexpected(void){
 	printf("Line %d, col %d: Variable identifier expected\n", line, (int)(col)-(int)strlen(yytext));
@@ -247,7 +239,7 @@ int  error_wrongnumberofarguments(char * function_name, char* got, char * expect
 /*as
 da
 sd
-as
+aszsjlszjkbdlahsdlahsdljh
 d+7+*/
 //final
 

@@ -28,10 +28,6 @@ typedef struct _tablelines{
     Table_lines *next; // proxima linha da tabela
 }TableLines;
 
-
-
-
-
 //mais simplificado
 char *tables_name[] = {"===== Outer Symbol Table =====", "===== Function Symbol Table =====", "===== Program Symbol Table ====="};
 char *name[] = {"boolean", "integer", "real", "false", "true", "paramcount", "program"};
@@ -78,7 +74,6 @@ enum{
     value_false=4
 };
 
-
 Table_lines* generic_lines_table(void);
 void insert_data(Table_lines *,char *, char *, char *, char *);
 void create_base_structure_table(Table_structure * );
@@ -88,17 +83,15 @@ Table_structure* create_generic_table(Table_structure *, char* );
 char *lower_case(char * );
 void print_tables(Table_structure *);
 int check_var(char * );
-
-
-void varDecl_funtion(Node * , Table_structure *);
+void varDecl_funtion(Node * , Table_structure *, Table_structure *);
 void funcPart_function(Node * , Table_structure  *);
-void funcDef_function(Node * , Table_structure * );
+void funcDef_function(Node * , Table_structure * , Table_structure *);
 void funcDecl_function(Node * , Table_structure * );
 void funcDef2_function(Node * , Table_structure * );
 void check_for_duplicates(Table_structure *, char * ,int ,int);
 void error_symbolalareadydefined(char * ,int,int );
-
-
+void check_symbol_not_defined(Node * ,Table_structure *, Table_structure *, char * );
+int  error_typeidentifierexpected(int , int );
 
 
 
@@ -127,8 +120,7 @@ Table_structure * create_tables(Node * node){
     
     ast(node, tabelaexterior, lastTable);
     
-    return tabelaexterior;
-    
+    return tabelaexterior;   
 }
 
 //cria estrutura base e devolve ponteiro
@@ -206,7 +198,7 @@ Table_lines * first_line(char *name, char *type, char *flag, char *value){
 void ast(Node * root, Table_structure * first_table, Table_structure * last_table) {
     if (root != NULL) {
         if (strcmp(root->type, "VarDecl") == 0) {
-            varDecl_funtion(root, last_table);
+            varDecl_funtion(root,first_table, last_table);//falta
         }
         else if (strcmp(root->type, "FuncPart") == 0) {
             funcPart_function(root,last_table);
@@ -215,7 +207,7 @@ void ast(Node * root, Table_structure * first_table, Table_structure * last_tabl
             
         }
         else if (strcmp(root->type, "FuncDef") == 0) {
-            funcDef_function(root, first_table);
+            funcDef_function(root, first_table,last_table);//falta
             
         }
         else if (strcmp(root->type, "FuncDecl") == 0) {
@@ -233,17 +225,24 @@ void ast(Node * root, Table_structure * first_table, Table_structure * last_tabl
     }
 }
 
-void varDecl_funtion(Node * parent, Table_structure *last_table) {
+void varDecl_funtion(Node * parent, Table_structure *first_table,Table_structure *last_table) {
     Node * temp = parent->son; //node temp is the first occurrence of a id
     Node * var_nodes = parent->son; //first variable
     int variable_type;
     char * compareduplicates;
+    char * compareTypeValue;
 
     while(temp->brother != NULL)  {//get to last brother
         temp = temp->brother;
     }
+
+    
     variable_type = check_var(temp->value); //get the variable type
     
+	//saca o tipo da variavel sem meter os underscores
+    compareTypeValue=(char *)calloc(1, sizeof(char));
+    strcpy(compareTypeValue, temp->value);
+
     
     while(var_nodes->brother != NULL) { //iterate through all variables
         if (last_table->data == NULL) { //if last_table has no data yet, a first line is created
@@ -255,6 +254,10 @@ void varDecl_funtion(Node * parent, Table_structure *last_table) {
 			strcpy(compareduplicates, var_nodes->value);
 			check_for_duplicates(last_table,lower_case(var_nodes->value),var_nodes->line, var_nodes->col);
 			//se nao saiu é porque nao ha duplicados
+
+			//ver symbol not defined
+			Node *aux=parent;
+			check_symbol_not_defined(aux,first_table,last_table,compareTypeValue);
 
             insert_data(last_table->data, lower_case(var_nodes->value), value[variable_type], NULL,NULL);
         }
@@ -309,21 +312,25 @@ void funcDef_function(Node * parent, Table_structure * first_table) {
                     if (strcmp(too_many_params->type,"VarParams") == 0){ 
                     	
                     	//duplicados
-                    	/*compareduplicates = (char *)calloc(1, sizeof(char));//alocar para novo simbolo
+                    	compareduplicates = (char *)calloc(1, sizeof(char));//alocar para novo simbolo
 						strcpy(compareduplicates, temp->value);
-						check_for_duplicates(new_table,lower_case(temp->value),temp->);
-                    	*/
+						check_for_duplicates(new_table,lower_case(temp->value),temp->line, temp->col);
+                    	//se nao saiu é porque nao ha duplicados
+
+                    	Node *aux=parent;
+						check_symbol_not_defined(aux,first_table,last_table,compareTypeValue);
 
                     	insert_data(new_table->data, lower_case(temp->value), value[variable_type], flag[flag_varparam], NULL);
                     }
                     else {
                     		//duplicados
-							/*compareduplicates = (char *)calloc(1, sizeof(char));//alocar para novo simbolo
+							compareduplicates = (char *)calloc(1, sizeof(char));//alocar para novo simbolo
 							strcpy(compareduplicates, temp->value);
-							check_for_duplicates(new_table,lower_case(temp->value));
-							*/
+							check_for_duplicates(new_table,lower_case(temp->value),temp->line, temp->col);
 							//se nao saiu é porque nao ha duplicados
                     		
+                    		//ver symbol not defined
+
                     		insert_data(new_table->data, lower_case(temp->value), value[variable_type], flag[flag_param], NULL);
                     }
                     temp = temp->brother;
@@ -458,7 +465,6 @@ char *lower_case(char * string){
     return string;
 }
 
-
 void print_tables(Table_structure *first_table){
     Table_structure * temp = first_table;
     
@@ -505,21 +511,97 @@ void check_for_duplicates(Table_structure *last, char * s,int line,int col){
 	}
 }
 
+void check_symbol_not_defined(Node * parent,Table_structure *first_table, Table_structure *last_table, char * type){
+
+	int global=1;
+	//percorrer a tabela actual e ver se existe uma variavel com o nome igual a type
+	// 1-> SE existir vêse o tipo dessa variavel é type
+			//1.1-> se for type insere
+			//1.2-> se não Id expected
+	// 	2-> se não existir em nenhuma é type identifier expected
+
+	//se não passo para a program table
+	//se nao passo para a outer table
+ 	Table_lines * tabelaexterior=first_table->data;						//tabela exterior
+ 	Table_lines * program_table=first_table->next->next->data;			//tabela do program
+ 	Table_lines * current_line = last_table->data;						//tabela da funcao
+
+ 	//percorre a function table, vê se existe alguma variavel com o nome=tipo
+	while( current_line != NULL){	
+		
+		if(strcmp(type,current_line->name)==0){
+			//type identifier expected
+			if(strcmp("_type_",current_line->type)==0){
+				global=0;
+				break;
+
+			}
+			else{
+				error_typeidentifierexpected(10,10);
+				exit(0);
+				break;
+
+			}
+		}
+		current_line=current_line->next;
+	}
+
+	//percorre a program table
+	while( program_table != NULL){	
+		if(strcmp(type,program_table->name)==0){
+			
+			if(strcmp("_type_",program_table->type)==0){//verifica se o que foi definido é um _type_
+				global=0;
+				break;
+			}
+			else{
+				error_typeidentifierexpected(10,10);
+				exit(0);
+				break;
+			}
+		}
+		
+		program_table=program_table->next;
+	}
+	//outer table
+	while( tabelaexterior != NULL){	
+		if(strcmp(type,tabelaexterior->name)==0){//se o nome for igual ao tipo tem de ver se esse nome é do tipo _type_
+			
+			if(strcmp("_type_",tabelaexterior->type)==0){//Pode inserir 
+				global=0;
+				break;
+			}
+			else if(strcmp("_type_",tabelaexterior->type)!=0){//se não for dá erro de id expected
+				error_typeidentifierexpected(10,10);
+				exit(0);
+				break;
+			}
+			
+		}
+		tabelaexterior=tabelaexterior->next;
+	}
+
+	if(global){
+		//error_typeidentifierexpected(10,10);
+		error_symbolnotdefined(type,10,10);	
+		//exit(0);
+	}
+}
 
 //Symbol <token> already defined
 void error_symbolalareadydefined(char * symbol,int line, int col){
-	printf("Line %d, col %d: Symbol %s already defined\n", line, col-strlen(symbol),symbol);
+	printf("Line %d, col %lu: Symbol %s already defined\n", line, col-strlen(symbol),symbol);
+}
+//Symn> not defined
+int  error_symbolnotdefined(char * symbol,line,col){
+	printf("Line %d, col %d: Symbol %s not defined\n", line,(int) col,symbol);
+	return 0;
 }
 
-
-
-
-//askjnajnsjndjnsjdnsjnd
-//asdlasgldjhasljdhvalshdv
-
-
-
-
-
+//Type identifier expected
+int  error_typeidentifierexpected(int line, int col){
+	printf("Line %d, col %d: Type identifier expected\n", line,col);
+	return 0;
+}
 
 
