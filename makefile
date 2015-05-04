@@ -1,13 +1,13 @@
-all: mpaparser.zip mpaparser
+all: mpasemantic.zip mpasemantic
 
-mpaparser.zip: mpaparser.y mpaparser.l structures.h
-	zip mpaparser.zip mpaparser.y mpaparser.l structures.h
+mpasemantic.zip: mpasemantic.y mpasemantic.l structures.h
+	zip mpasemantic.zip mpasemantic.y mpasemantic.l structures.h thirdfase.h
 
-mpaparser: lex.yy.c y.tab.c structures.h
-	gcc -g -o mpaparser y.tab.c lex.yy.c -ll -ly
+mpasemantic: lex.yy.c y.tab.c structures.h
+	gcc -g -o mpasemantic y.tab.c lex.yy.c -ll -ly
 
-y.tab.c: mpaparser.y
-	yacc -v -o y.tab.c -d mpaparser.y
+y.tab.c: mpasemantic.y
+	yacc -v -o y.tab.c -d mpasemantic.y
 
-lex.yy.c: mpaparser.l
-	lex -o lex.yy.c mpaparser.l
+lex.yy.c: mpasemantic.l
+	lex -o lex.yy.c mpasemantic.l

@@ -58,7 +58,7 @@ void addChild(Node * temp, Node * child) {
     temp->son = child;
 }
 /*
-esta funcao pode dar merda o prof aconselhou a fazer uma versao iterativa para ver os tipos dos dados
+esta funcao pode dar bode -> o professor aconselhou a fazer uma versao iterativa para ver os tipos dos dados
 */
 void printAll(Node * node,int level) {
     int i;
@@ -67,10 +67,10 @@ void printAll(Node * node,int level) {
         printf("..");
     }
     //if(strcmp(node->type,"")!=0)
-            printf("%s         type=%s, value=%s\n",node->id,node->type,node->value);
+    //        printf("%s         type=%s, value=%s\n",node->id,node->type,node->value);
 
     //else
-    //printf("%s\n",node->id);
+    printf("%s\n",node->id);
 
     printAll(node->son,level+1);
     printAll(node->brother,level);
