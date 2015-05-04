@@ -221,11 +221,8 @@ int  error_operatornotappliedtotypes(char * operator, char * type1, char * type2
 	printf("Line %d, col %d: Operator %s cannot be applied to types %s, %s\n", line, (int)(col)-(int)strlen(yytext),operator,type1,type2);
 	return 0;
 }
-//Symbol <token> already defined
-int error_symbolalareadydefined(char * symbol){
-	printf("Line %d, col %d: Symbol %s already defined\n", line, (int)(col)-(int)strlen(yytext),symbol);
-return 0;
-}
+
+
 //Symn> not defined
 int  error_symbolnotdefined(char * symbol){
 	printf("Line %d, col %d: Symbol %s not defined\n", line, (int)(col)-(int)strlen(yytext),symbol);
