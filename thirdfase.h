@@ -619,10 +619,10 @@ void check_symbol_not_defined(Node * parent,Table_structure *first_table, Table_
 
 //Symbol <token> already defined
 void error_symbolalareadydefined(char * symbol,int line, int col){
-	printf("Line %d, col %lu: Symbol %s already defined\n", line, col-strlen(symbol),symbol);
+	printf("Line %d, col %lu: Symbol %s already defined\n", line, col,symbol);
 }
 //Symn> not defined
-int  error_symbolnotdefined(char * symbol,line,col){
+int  error_symbolnotdefined(char * symbol,int line, int col){
 	printf("Line %d, col %d: Symbol %s not defined\n", line,(int) col,symbol);
 	return 0;
 }

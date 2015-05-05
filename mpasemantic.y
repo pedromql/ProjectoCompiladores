@@ -52,7 +52,7 @@ char * name_var2;
 
 Program   			: ProgHeading  ';'  ProgBlock  '.' 		{root=make_node("Program","Program",NULL,$1,NULL,line,col-(int)strlen(yytext) -1); addBrother($1,$3);};
 
-ProgHeading			: PROGRAM ID '(' OUTPUT ')'				{name_var=(char*)malloc(strlen($2)*sizeof(char));   strcpy(name_var,$2); aux = (char*)malloc(5+strlen($2)*sizeof(char)); sprintf(aux,"Id(%s)",$2); $$ = make_node(aux,"Id",name_var,NULL,NULL,line,col-(int)strlen(yytext));};
+ProgHeading			: PROGRAM ID '(' OUTPUT ')'				{name_var=(char*)malloc(strlen($2)*sizeof(char));   strcpy(name_var,$2); aux = (char*)malloc(5+strlen($2)*sizeof(char)); sprintf(aux,"Id(%s)",$2); $$ = make_node(aux,"Id",name_var,NULL,NULL,@2.first_line,@2.first_column);};
 
 ProgBlock			: VarPart FuncPart StatPart				{$$ = $1; tmp = make_node("FuncPart","FuncPart",NULL,$2,NULL,line,col-(int)strlen(yytext)); addBrother(tmp,$3); addBrother($1,tmp);};
 
@@ -62,11 +62,11 @@ VarPart 			: VAR VarDeclaration ';' VarPart2		{$$ = make_node("VarPart","VarPart
 VarPart2 			: VarDeclaration ';' VarPart2			{$$ = $1; addBrother($1,$3);};
 					| 										{$$ = NULL;};
 
-VarDeclaration 		: IDList ':' ID 						{name_var=(char*)malloc(strlen($3)*sizeof(char));   strcpy(name_var,$3);   aux = (char*)malloc(5+strlen($3)*sizeof(char)); sprintf(aux,"Id(%s)",$3); addBrother($1,make_node(aux,"Id",name_var,NULL,NULL,line,col-(int)strlen(yytext))); $$ = make_node("VarDecl","VarDecl",NULL,$1,NULL,line,col-(int)strlen(yytext));};
+VarDeclaration 		: IDList ':' ID 						{name_var=(char*)malloc(strlen($3)*sizeof(char));   strcpy(name_var,$3);   aux = (char*)malloc(5+strlen($3)*sizeof(char)); sprintf(aux,"Id(%s)",$3); addBrother($1,make_node(aux,"Id",name_var,NULL,NULL,@3.first_line,@3.first_column)); $$ = make_node("VarDecl","VarDecl",NULL,$1,NULL,line,col-(int)strlen(yytext));};
 
-IDList 				: ID IDList2							{name_var=(char*)malloc(strlen($1)*sizeof(char));   strcpy(name_var,$1);   aux = (char*)malloc(5+strlen($1)*sizeof(char)); sprintf(aux,"Id(%s)",$1); $$ = make_node(aux,"Id",name_var,NULL,$2,line,col-(int)strlen(yytext));};
+IDList 				: ID IDList2							{name_var=(char*)malloc(strlen($1)*sizeof(char));   strcpy(name_var,$1);   aux = (char*)malloc(5+strlen($1)*sizeof(char)); sprintf(aux,"Id(%s)",$1); $$ = make_node(aux,"Id",name_var,NULL,$2,@1.first_line,@1.first_column);};
 
-IDList2 			: ',' ID IDList2						{name_var=(char*)malloc(strlen($2)*sizeof(char));   strcpy(name_var,$2);   aux = (char*)malloc(5+strlen($2)*sizeof(char)); sprintf(aux,"Id(%s)",$2); $$ = make_node(aux,"Id",name_var,NULL,$3,line,col-(int)strlen(yytext));};
+IDList2 			: ',' ID IDList2						{name_var=(char*)malloc(strlen($2)*sizeof(char));   strcpy(name_var,$2);   aux = (char*)malloc(5+strlen($2)*sizeof(char)); sprintf(aux,"Id(%s)",$2); $$ = make_node(aux,"Id",name_var,NULL,$3,@2.first_line,@2.first_column);};
 					| 										{$$ = NULL;};
 
 FuncPart 			: FuncDeclaration ';' FuncPart 			{addBrother($1,$3); $$ = $1;};
@@ -76,18 +76,18 @@ FuncDeclaration 	: FuncHeading ';' FORWARD 				{$$ = make_node("FuncDecl","FuncD
 					| FuncIdent ';' FuncBlock 				{addBrother($1,$3); $$ = make_node("FuncDef2","FuncDef2",NULL,$1,NULL,line,col-(int)strlen(yytext));};
 					| FuncHeading ';' FuncBlock				{addBrother($1,$3); $$ = make_node("FuncDef","FuncDef",NULL,$1,NULL,line,col-(int)strlen(yytext));};
 
-FuncHeading 		: FUNCTION ID ':' ID 					{name_var=(char*)malloc(strlen($2)*sizeof(char));   strcpy(name_var,$2);   name_var2=(char*)malloc(strlen($4)*sizeof(char));   strcpy(name_var2,$4);   aux = (char*)malloc(5+strlen($2)*sizeof(char)); sprintf(aux,"Id(%s)",$2); aux2 = (char*)malloc(5+strlen($4)*sizeof(char)); sprintf(aux2,"Id(%s)",$4); tmp = make_node(aux,"Id",name_var,NULL,make_node("FuncParams","FuncParams",NULL,NULL,NULL,line,col-(int)strlen(yytext)),line,col-(int)strlen(yytext)); addBrother(tmp,make_node(aux2,"Id",name_var2,NULL,NULL,line,col-(int)strlen(yytext))); $$ = tmp;};
-					| FUNCTION ID FormalParamList ':' ID 	{name_var=(char*)malloc(strlen($2)*sizeof(char));   strcpy(name_var,$2);   name_var2=(char*)malloc(strlen($5)*sizeof(char));   strcpy(name_var2,$5);  aux = (char*)malloc(5+strlen($2)*sizeof(char)); sprintf(aux,"Id(%s)",$2); aux2 = (char*)malloc(5+strlen($5)*sizeof(char)); sprintf(aux2,"Id(%s)",$5); tmp = make_node(aux,"Id",name_var,NULL,NULL,line,col-(int)strlen(yytext)); if ($3 == NULL) {$3=make_node("FuncParams","FuncParams",NULL,NULL,NULL,line,col-(int)strlen(yytext));} addBrother(tmp,$3); addBrother($3,make_node(aux2,"Id",name_var2,NULL,NULL,line,col-(int)strlen(yytext))); $$ = tmp;};
+FuncHeading 		: FUNCTION ID ':' ID 					{name_var=(char*)malloc(strlen($2)*sizeof(char));   strcpy(name_var,$2);   name_var2=(char*)malloc(strlen($4)*sizeof(char));   strcpy(name_var2,$4);   aux = (char*)malloc(5+strlen($2)*sizeof(char)); sprintf(aux,"Id(%s)",$2); aux2 = (char*)malloc(5+strlen($4)*sizeof(char)); sprintf(aux2,"Id(%s)",$4); tmp = make_node(aux,"Id",name_var,NULL,make_node("FuncParams","FuncParams",NULL,NULL,NULL,@2.first_line,@2.first_column),line,col-(int)strlen(yytext)); addBrother(tmp,make_node(aux2,"Id",name_var2,NULL,NULL,@4.first_line,@4.first_column)); $$ = tmp;};
+					| FUNCTION ID FormalParamList ':' ID 	{name_var=(char*)malloc(strlen($2)*sizeof(char));   strcpy(name_var,$2);   name_var2=(char*)malloc(strlen($5)*sizeof(char));   strcpy(name_var2,$5);  aux = (char*)malloc(5+strlen($2)*sizeof(char)); sprintf(aux,"Id(%s)",$2); aux2 = (char*)malloc(5+strlen($5)*sizeof(char)); sprintf(aux2,"Id(%s)",$5); tmp = make_node(aux,"Id",name_var,NULL,NULL,@2.first_line,@2.first_column); if ($3 == NULL) {$3=make_node("FuncParams","FuncParams",NULL,NULL,NULL,line,col-(int)strlen(yytext));} addBrother(tmp,$3); addBrother($3,make_node(aux2,"Id",name_var2,NULL,NULL,@5.first_line,@5.first_column)); $$ = tmp;};
 
-FuncIdent 			: FUNCTION ID 							{name_var=(char*)malloc(strlen($2)*sizeof(char));   strcpy(name_var,$2); aux = (char*)malloc(5+strlen($2)*sizeof(char)); sprintf(aux,"Id(%s)",$2); $$ = make_node(aux,"Id",name_var,NULL,NULL,line,col-(int)strlen(yytext));};
+FuncIdent 			: FUNCTION ID 							{name_var=(char*)malloc(strlen($2)*sizeof(char));   strcpy(name_var,$2); aux = (char*)malloc(5+strlen($2)*sizeof(char)); sprintf(aux,"Id(%s)",$2); $$ = make_node(aux,"Id",name_var,NULL,NULL,@2.first_line,@2.first_column);};
 
 FormalParamList 	: '(' FormalParams FormalParamListaux ')' {addBrother($2,$3); $$ = make_node("FuncParams","FuncParams",NULL,$2,NULL,line,col-(int)strlen(yytext));};
 
 FormalParamListaux 	: ';' FormalParams FormalParamListaux 	{addBrother($2,$3); $$ = $2;};
 					|										{$$ = NULL;};
 
-FormalParams 		: IDList ':' ID 						{name_var=(char*)malloc(strlen($3)*sizeof(char));   strcpy(name_var,$3);   aux = (char*)malloc(5+strlen($3)*sizeof(char)); sprintf(aux,"Id(%s)",$3); tmp = make_node(aux,"Id",name_var,NULL,NULL,line,col-(int)strlen(yytext)); addBrother($1,tmp); $$ = make_node("Params","Params",NULL,$1,NULL,line,col-(int)strlen(yytext));};
-					| VAR IDList ':' ID 					{name_var=(char*)malloc(strlen($4)*sizeof(char));   strcpy(name_var,$4);   aux = (char*)malloc(5+strlen($4)*sizeof(char)); sprintf(aux,"Id(%s)",$4); tmp = make_node(aux,"Id",name_var,NULL,NULL,line,col-(int)strlen(yytext)); addBrother($2,tmp); $$ = make_node("VarParams","VarParams",NULL,$2,NULL,line,col-(int)strlen(yytext));};
+FormalParams 		: IDList ':' ID 						{name_var=(char*)malloc(strlen($3)*sizeof(char));   strcpy(name_var,$3);   aux = (char*)malloc(5+strlen($3)*sizeof(char)); sprintf(aux,"Id(%s)",$3); tmp = make_node(aux,"Id",name_var,NULL,NULL,@3.first_line,@3.first_column); addBrother($1,tmp); $$ = make_node("Params","Params",NULL,$1,NULL,line,col-(int)strlen(yytext));};
+					| VAR IDList ':' ID 					{name_var=(char*)malloc(strlen($4)*sizeof(char));   strcpy(name_var,$4);   aux = (char*)malloc(5+strlen($4)*sizeof(char)); sprintf(aux,"Id(%s)",$4); tmp = make_node(aux,"Id",name_var,NULL,NULL,@4.first_line,@4.first_column); addBrother($2,tmp); $$ = make_node("VarParams","VarParams",NULL,$2,NULL,line,col-(int)strlen(yytext));};
 
 FuncBlock 			: VarPart StatPart 						{addBrother($1,$2); $$ = $1;};
 
@@ -105,18 +105,18 @@ Stat  				: CompStat 								{$$ = $1;};
 					| IF Expr THEN Stat ELSE Stat 			{tmp = check_statlist($4,line,col-(int)strlen(yytext)); tmp2 = check_statlist($6,line,col-(int)strlen(yytext)); addBrother(tmp,tmp2); addBrother($2,tmp); $$ = make_node("IfElse","IfElse",NULL,$2,NULL,line,col-(int)strlen(yytext));};
 					| WHILE Expr DO Stat 					{tmp = check_statlist($4,line,col-(int)strlen(yytext)); addBrother($2,tmp); $$ = make_node("While","While",NULL,$2,NULL,line,col-(int)strlen(yytext));};
 					| REPEAT StatList UNTIL Expr 			{tmp = check_statlist($2,line,col-(int)strlen(yytext)); addBrother(tmp,$4); $$ = make_node("Repeat","Repeat",NULL,tmp,NULL,line,col-(int)strlen(yytext));};
-					| VAL '(' PARAMSTR '(' Expr ')' ',' ID ')' { strcpy(name_var,$8);   aux = (char*)malloc(5+strlen($8)*sizeof(char)); sprintf(aux,"Id(%s)",$8); addBrother($5,make_node(aux,"Id",name_var,NULL,NULL,line,col-(int)strlen(yytext))); $$ = make_node("ValParam","ValParam",NULL,$5,NULL,line,col-(int)strlen(yytext));};
+					| VAL '(' PARAMSTR '(' Expr ')' ',' ID ')' { strcpy(name_var,$8);   aux = (char*)malloc(5+strlen($8)*sizeof(char)); sprintf(aux,"Id(%s)",$8); addBrother($5,make_node(aux,"Id",name_var,NULL,NULL,@8.first_line,@8.first_column)); $$ = make_node("ValParam","ValParam",NULL,$5,NULL,line,col-(int)strlen(yytext));};
 					| optStat2 								{$$ = $1;};
 					| WRITELN 								{$$ = make_node("WriteLn","WriteLn",NULL,NULL,NULL,line,col-(int)strlen(yytext));};
 					| WRITELN WritelnPList 					{$$ = make_node("WriteLn","WriteLn",NULL,$2,NULL,line,col-(int)strlen(yytext)); };
 
-optStat2 			: ID ASSIGN Expr 						{name_var=(char*)malloc(strlen($1)*sizeof(char)); strcpy(name_var,$1);   aux = (char*)malloc(5+strlen($1)*sizeof(char)); sprintf(aux,"Id(%s)",$1); tmp = make_node(aux,"Id",name_var ,NULL,$3,line,col-(int)strlen(yytext)); $$ = make_node("Assign","Assign",NULL,tmp,NULL,line,col-(int)strlen(yytext));};
+optStat2 			: ID ASSIGN Expr 						{name_var=(char*)malloc(strlen($1)*sizeof(char)); strcpy(name_var,$1);   aux = (char*)malloc(5+strlen($1)*sizeof(char)); sprintf(aux,"Id(%s)",$1); tmp = make_node(aux,"Id",name_var ,NULL,$3,@1.first_line,@1.first_column); $$ = make_node("Assign","Assign",NULL,tmp,NULL,line,col-(int)strlen(yytext));};
 					|										{$$ = NULL;};
 
 WritelnPList 		: '(' optWritelnPList WritelnPList2 ')' {$$ = $2; addBrother($2,$3);};
 
 optWritelnPList 	: Expr 									{$$ = $1;};
-					| STRING 								{name_var=(char*)malloc(strlen($1)*sizeof(char)); strcpy(name_var,$1);   aux = (char*)malloc(9+strlen($1)*sizeof(char)); sprintf(aux,"String(%s)",$1); $$ = make_node(aux,"String",name_var,NULL,NULL,line,col-(int)strlen(yytext));};
+					| STRING 								{name_var=(char*)malloc(strlen($1)*sizeof(char)); strcpy(name_var,$1);   aux = (char*)malloc(9+strlen($1)*sizeof(char)); sprintf(aux,"String(%s)",$1); $$ = make_node(aux,"String",name_var,NULL,NULL,@1.first_line,@1.first_column);};
 
 WritelnPList2 		: ',' optWritelnPList WritelnPList2 	{$$ = $2; addBrother($2,$3);};
 					|										{$$ = NULL;};
@@ -145,10 +145,10 @@ Term				: Term AND Factor 						{$$ = make_node("And","And",NULL,$1,NULL,line,co
 
 Factor				: NOT Factor 							{$$ = make_node("Not","Not",NULL,$2,NULL,line,col-(int)strlen(yytext));};
 					| '(' Expr ')' 							{$$ = $2;};
-					| INTLIT 								{name_var=(char*)malloc(strlen($1)*sizeof(char));   strcpy(name_var,$1);   aux = (char*)malloc(9+strlen($1)*sizeof(char)); sprintf(aux,"IntLit(%s)",$1); $$ = make_node(aux,"IntLit",name_var,NULL,NULL,line,col-(int)strlen(yytext));};
-					| REALLIT 								{name_var=(char*)malloc(strlen($1)*sizeof(char));   strcpy(name_var,$1);   aux = (char*)malloc(10+strlen($1)*sizeof(char)); sprintf(aux,"RealLit(%s)",$1); $$ = make_node(aux,"RealLit",name_var,NULL,NULL,line,col-(int)strlen(yytext));};
-					| ID ParamList 							{name_var=(char*)malloc(strlen($1)*sizeof(char));   strcpy(name_var,$1);   aux = (char*)malloc(5+strlen($1)*sizeof(char)); sprintf(aux,"Id(%s)",$1); $$ = make_node("Call","Call",NULL,make_node(aux,"Id",name_var,NULL,$2,line,col-(int)strlen(yytext)),NULL,line,col-(int)strlen(yytext));};
-					| ID 									{/*printf("%lu %lu\n",line,col-(int)strlen(yytext));*/	name_var=(char*)malloc(strlen($1)*sizeof(char));   strcpy(name_var,$1);   aux = (char*)malloc(5+strlen($1)*sizeof(char)); sprintf(aux,"Id(%s)",$1); $$ = make_node(aux,"Id",name_var,NULL,NULL,line,col-(int)strlen(yytext));};
+					| INTLIT 								{name_var=(char*)malloc(strlen($1)*sizeof(char));   strcpy(name_var,$1);   aux = (char*)malloc(9+strlen($1)*sizeof(char)); sprintf(aux,"IntLit(%s)",$1); $$ = make_node(aux,"IntLit",name_var,NULL,NULL,@1.first_line,@1.first_column);};
+					| REALLIT 								{name_var=(char*)malloc(strlen($1)*sizeof(char));   strcpy(name_var,$1);   aux = (char*)malloc(10+strlen($1)*sizeof(char)); sprintf(aux,"RealLit(%s)",$1); $$ = make_node(aux,"RealLit",name_var,NULL,NULL,@1.first_line,@1.first_column);};
+					| ID ParamList 							{name_var=(char*)malloc(strlen($1)*sizeof(char));   strcpy(name_var,$1);   aux = (char*)malloc(5+strlen($1)*sizeof(char)); sprintf(aux,"Id(%s)",$1); $$ = make_node("Call","Call",NULL,make_node(aux,"Id",name_var,NULL,$2,@1.first_line,@1.first_column),NULL,line,col-(int)strlen(yytext));};
+					| ID 									{/*printf("%lu %lu\n",line,col-(int)strlen(yytext));*/	name_var=(char*)malloc(strlen($1)*sizeof(char));   strcpy(name_var,$1);   aux = (char*)malloc(5+strlen($1)*sizeof(char)); sprintf(aux,"Id(%s)",$1); $$ = make_node(aux,"Id",name_var,NULL,NULL,@1.first_line,@1.first_column);};
 
 ParamList        	: '(' Expr repParamList ')'				{addBrother($2,$3); $$ = $2;};
 
