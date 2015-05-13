@@ -11,6 +11,7 @@ mpaparser.l.orig
 *.output
 *.txt
 
+downloads
 mpasemantic
 *.h.gch
 y.tab.h
