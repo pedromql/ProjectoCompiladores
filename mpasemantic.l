@@ -23,11 +23,11 @@ reserved			"abs"|"arctan"|"array"|"case"|"char"|"chr"|"const"|"cos"|"dispose"|"d
 
 %%
 {reserved}							{ return RESERVED; }
-("(*")								{line_aux = line; col_aux = col; col+=2; BEGIN TESTECOMENT;}
-("{")								{line_aux = line; col_aux = col; col++; BEGIN TESTECOMENT;}
-<TESTECOMENT>("*)")					{BEGIN 0; col+=2;}
-<TESTECOMENT>("}")					{BEGIN 0; col++;}
-<TESTECOMENT>.						{col++;};
+("(*")								{line_aux = line; col_aux = col; BEGIN TESTECOMENT;}
+("{")								{line_aux = line; col_aux = col; BEGIN TESTECOMENT;}
+<TESTECOMENT>("*)")					{BEGIN 0; }
+<TESTECOMENT>("}")					{BEGIN 0; }
+<TESTECOMENT>.						{ };
 <TESTECOMENT>\n						{line++; col=1;};
 <TESTECOMENT><<EOF>>				{printf("Line %d, col %lu: unterminated comment\n",line_aux,col_aux); return 0;};
 "'"([^\n']|'')*(("''")|[<<EOF>>])*	{printf("Line %d, col %lu: unterminated string\n",line,col); }
