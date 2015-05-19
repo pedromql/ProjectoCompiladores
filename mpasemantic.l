@@ -23,14 +23,14 @@ reserved			"abs"|"arctan"|"array"|"case"|"char"|"chr"|"const"|"cos"|"dispose"|"d
 
 %%
 {reserved}							{ return RESERVED; }
-("(*")								{line_aux = line; col_aux = col; BEGIN TESTECOMENT;}
-("{")								{line_aux = line; col_aux = col; BEGIN TESTECOMENT;}
-<TESTECOMENT>("*)")					{BEGIN 0; }
-<TESTECOMENT>("}")					{BEGIN 0; }
-<TESTECOMENT>.						{ };
-<TESTECOMENT>\n						{line++; col=1;};
+("(*")						{line_aux = line; col_aux = col; BEGIN TESTECOMENT;}
+("{")						{line_aux = line; col_aux = col; BEGIN TESTECOMENT;}
+<TESTECOMENT>("*)")			{BEGIN 0; }
+<TESTECOMENT>("}")			{BEGIN 0; }
+<TESTECOMENT>.				{};
+<TESTECOMENT>\n				{line++; col=1;};
 <TESTECOMENT><<EOF>>				{printf("Line %d, col %lu: unterminated comment\n",line_aux,col_aux); return 0;};
-"'"([^\n']|'')*(("''")|[<<EOF>>])*	{printf("Line %d, col %lu: unterminated string\n",line,col); }
+"'"([^\n']|'')*(("''")|[<<EOF>>])*	{printf("Line %d, col %d: unterminated string\n",line,yylloc.first_column);}
 ":="								{ 											return ASSIGN			;}
 "begin"								{ 											return BEG 				;}
 "do"								{ 											return DO 				;}
@@ -65,7 +65,7 @@ reserved			"abs"|"arctan"|"array"|"case"|"char"|"chr"|"const"|"cos"|"dispose"|"d
 {num}("."{num})?(e[-+]?{num})?		{ yylval.str = (char*)strdup(yytext); 		return REALLIT 			;}
 "'"([^\n']|'')*"'"					{ yylval.str = (char*)strdup(yytext); 		return STRING 			;}
 " "|"\t"							{ 																	 }	
-.									{printf("Line %d, col %lu: illegal character ('%s')\n",line,col,yytext); };
+.									{printf("Line %d, col %d: illegal character ('%s')\n",line,yylloc.first_column,yytext); };
 \n 		{col = 1; line++;};
 %%
 
