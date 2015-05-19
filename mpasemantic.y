@@ -9,6 +9,7 @@ extern int line;
 extern unsigned long col;
 extern char* yytext;
 void yyerror (char *s);
+int global=0;
 
 Node * tmp;
 Node * tmp2;
@@ -162,13 +163,21 @@ repParamList 		: ',' Expr repParamList 				{addBrother($2,$3); $$ = $2;};
 
 void yyerror (char *s) {
 	 printf ("Line %d, col %d: %s: %s\n", line, (int)(col)-(int)strlen(yytext), s, yytext);
+	 global+=1;
 }
 
 int main(int argc, char * argv[]) {
 	yyparse();
 	//printAll(root,0);
 	if ( argc == 2 && strcmp(argv[1],"-t") == 0) printAll(root,0);
-	else if (argc == 2 && strcmp(argv[1],"-s") == 0) print_tables(create_tables(root));
+	else if (argc == 2 && strcmp(argv[1],"-s") == 0){
+
+		if(global!=0)
+			exit(0);
+		//printf("========\n\nGLOBAL=%d==========\n\n",global);
+		print_tables(create_tables(root));
+
+	} 
 	else if (argc == 3) {
 		printAll(root,0);
 		printf("\n");
@@ -180,11 +189,9 @@ int main(int argc, char * argv[]) {
 
 
 /*tratamento de erros, as funcoes retorna 1 se tiverem erros 
-	
 	1-> tipo de dados impresso como aparece na tabela
 	2-> os tokens são impressos da mesma maneira que são lidos
-	3-> NOS STATEMENTS (if, while, repeat-until e val-paramstr) DEVERAO ESTAR EM MINUSCULAS CARALHO!!!!!!!
-
+	3-> NOS STATEMENTS (if, while, repeat-until e val-paramstr) DEVERAO ESTAR EM MINUSCULAS !!!!!!!
 */
 //Cannot write values of type <type>
 int error_cannotwritevalues(char* type){
