@@ -1,0 +1,1 @@
+void codeGeneration(arvore no,tabela_simbolos ts);
