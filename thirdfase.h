@@ -101,6 +101,8 @@ void check_symbol_not_defined(Node * ,Table_structure *, Table_structure *, char
 int  error_symbolnotdefined(char * ,int , int );
 int  error_typeidentifierexpected(int , int );
 
+int error_imcompatibletypeinstatement(int, int, char *, char *);
+
 
 
 
@@ -224,6 +226,9 @@ void ast(Node * root, Table_structure * first_table, Table_structure * last_tabl
         else if (strcmp(root->type, "FuncDef2") == 0) {
             funcDef2_function(root,first_table);
             
+        }
+        else if (strcmp(root->type, "IfElse") == 0) {
+            printf("IFELSE\n");
         }
         else { //if there is nothing to be done it continues to the son
             ast(root->son,first_table,last_table);
@@ -564,7 +569,7 @@ void check_for_duplicates(Table_structure *last, char * s,int line,int col){
     }
     if(global){
         error_symbolalareadydefined(s,line,col);    
-        exit(0);
+        //exit(0);
     }
 }
 //Symbol <token> already defined
@@ -598,7 +603,7 @@ void check_symbol_not_defined(Node * parent,Table_structure *first_table, Table_
             }
             else{
                 error_typeidentifierexpected(line,col);
-                exit(0);
+                //exit(0);
                 break;
 
             }
@@ -617,7 +622,7 @@ void check_symbol_not_defined(Node * parent,Table_structure *first_table, Table_
             }
             else{
                 error_typeidentifierexpected(line,col);
-                exit(0);
+                //exit(0);
                 break;
             }
         }
@@ -634,7 +639,7 @@ void check_symbol_not_defined(Node * parent,Table_structure *first_table, Table_
             }
             else if(strcmp("_type_",tabelaexterior->type)!=0){//se não for dá erro de id expected
                 error_typeidentifierexpected(line,col);
-                exit(0);
+                //exit(0);
                 break;
             }
             
@@ -645,7 +650,7 @@ void check_symbol_not_defined(Node * parent,Table_structure *first_table, Table_
     if(global){
         //error_typeidentifierexpected(10,10);
         error_symbolnotdefined(type,line,col); 
-        exit(0);
+        //exit(0);
     }
 }
 
@@ -658,6 +663,11 @@ int  error_typeidentifierexpected(int line, int col){
     printf("Line %d, col %d: Type identifier expected\n", line,col);
     return 0;
 }
+
+int error_imcompatibletypeinstatement(int line, int col, char * type_1, char * type_2) {
+    return 0;
+}
+
 
 
 
