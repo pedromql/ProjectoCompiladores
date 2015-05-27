@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include "structures.h"
 #include "thirdfase.h"
 
 void codeGeneration(arvore no,tabela_simbolos ts){

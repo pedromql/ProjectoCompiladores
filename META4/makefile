@@ -3,11 +3,11 @@ all: mpacompiler.zip mpacompiler
 clean:
 	@-rm y.* lex.* mpacompiler mpacompiler.zip
 
-mpacompiler.zip: mpacompiler.l mpacompiler.y structures.h thirdfase.h
-	zip -u mpacompiler.zip mpacompiler.l mpacompiler.y structures.h thirdfase.h
+mpacompiler.zip: mpacompiler.l mpacompiler.y structures.h thirdfase.h code_generation.c
+	zip -u mpacompiler.zip mpacompiler.l mpacompiler.y structures.h thirdfase.h code_generation.c
 
-mpacompiler: lex.yy.c y.tab.c structures.h thirdfase.h
-	gcc -g -Wall -o mpacompiler y.tab.c lex.yy.c -ll -ly
+mpacompiler: lex.yy.c y.tab.c structures.h thirdfase.h code_generation.c
+	gcc -g -Wall -o mpacompiler y.tab.c code_generation.c lex.yy.c -ll -ly
 
 lex.yy.c: mpacompiler.l
 	lex mpacompiler.l
