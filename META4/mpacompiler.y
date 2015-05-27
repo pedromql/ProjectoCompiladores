@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-//#include "structures.h"
+#include "structures.h"
 #include "thirdfase.h"
 
 extern int line;
@@ -222,6 +222,9 @@ int  error_operatornotappliedtotypes(char * operator, char * type1, char * type2
 	return 0;
 }
 
+
+
+
 //Variable identifier expected
 int  error_variableidentifierexpected(void){
 	printf("Line %d, col %d: Variable identifier expected\n", line, (int)(col)-(int)strlen(yytext));
@@ -232,100 +235,12 @@ int  error_wrongnumberofarguments(char * function_name, char* got, char * expect
 	printf("Line %d, col %d: Wrong number of arguments in call to function %s (got %s, expected %s)\n", line, (int)(col)-(int)strlen(yytext),function_name,got,expected);
 	return 0;
 }
-
-
-Node * make_node(char *name,char *type,char *value,Node *son,Node *brother, int line, int col){
-    
-    Node *new = malloc(sizeof(Node));
-    
-    if (name != NULL) {
-        new->id = (char*)malloc(strlen(name)*sizeof(char));
-        strcpy(new->id,name);
-    }
-    else new->id = (char*)malloc(sizeof(char));
-    
-    if (type != NULL) {
-        
-        //tipo
-        new->type = (char*)malloc(strlen(type)*sizeof(char));
-        strcpy(new->type,type);
-    }
-    else {
-        new->type = (char*)malloc(sizeof(char));
-    }
-    if (value != NULL) {
-
-        //valor
-        new->value = (char*)malloc(strlen(value)*sizeof(char));
-        strcpy(new->value,value);
-    }
-    else{
-        new->value = (char*)malloc(sizeof(char));
-
-    } 
-
-    new->brother = brother;
-    new->son = son;
-    new->line = line;
-    new->col = col;
-
-    return new;
-}
-
-void addBrother(Node * temp, Node * brother) {
-    if (temp == NULL || brother == NULL) return;
-    while (temp->brother != NULL) {
-        temp = temp->brother;
-    }
-    temp->brother = brother;
-}
-
-void addChild(Node * temp, Node * child) {
-    temp->son = child;
-}
-/*
-esta funcao pode dar bode -> o professor aconselhou a fazer uma versao iterativa para ver os tipos dos dados
-*/
-void printAll(Node * node,int level) {
-    int i;
-    if (node == NULL) return;
-    for (i = 0; i < level; i++) {
-        printf("..");
-    }
-    //if(strcmp(node->type,"")!=0)
-    //        printf("%s         type=%s, value=%s\n",node->id,node->type,node->value);
-
-    //else
-    printf("%s\n",node->id);
-
-    printAll(node->son,level+1);
-    printAll(node->brother,level);
-}
-
-Node * check_statlist(Node * temp, int line, int col) {
-    if (temp == NULL ) {
-        return make_node("StatList",NULL,NULL,NULL,NULL,line,col);
-    }
-    else if (temp->brother == NULL) {
-        return temp;
-    }
-    
-    else {
-        return make_node("StatList",NULL,NULL,temp,NULL,line,col);
-        
-    }
-}
-
-Node * check_statlist2(Node * temp, int line, int col) {
-
-    if (temp == NULL || temp->brother == NULL) {
-        return temp;
-    }
-    
-    else {
-        return make_node("StatList",NULL,NULL,temp,NULL,line,col);
-        
-    }
-}
+//aljhsbdkjabsdohbaosdhb
+/*as
+da
+sd
+aszsjlszjkbdlahsdlahsdljh
+d+7+*/
+//final
 
 
