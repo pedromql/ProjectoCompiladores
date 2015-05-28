@@ -1,8 +1,20 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include "structures.h"
-#include "thirdfase.h"
+
+
+void printType(Table_lines * data){
+
+	
+	char* integer = "i32";
+	char* real = "double";
+	char* boolean = "i1";
+
+	if(strcmp(data->type,"_integer_")==0){
+		printf("@%s = global %s \n",data->name,integer);
+	}
+	
+}
 
 void generator(Node *node,Table_structure *first_table){
 	
@@ -42,17 +54,6 @@ void generator(Node *node,Table_structure *first_table){
 
 
 
-void printType(Table_lines * data){
-
-	
-	char* integer = "i32";
-	char* real = "double";
-	char* boolean = "i1";
-
-	if(strcmp(data->type,"_integer_")==0){
-		printf("@%s = global %s \n",data->name,integer);
-	}
-	
 
    	
 
@@ -64,7 +65,6 @@ void printType(Table_lines * data){
 
 
 
-}
 
 /*char* checkType(arvore no,tabela_simbolos ts){
 	

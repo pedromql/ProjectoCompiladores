@@ -4,6 +4,7 @@
 #include <string.h>
 #include "structures.h"
 #include "thirdfase.h"
+#include "code_generation.h"
 
 extern int line;
 extern unsigned long col;
