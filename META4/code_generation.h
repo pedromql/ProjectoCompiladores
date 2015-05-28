@@ -1,9 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include "structures.h"
-#include "thirdfase.h"
-
 
 
 void printType(Table_lines * data){
@@ -17,19 +14,7 @@ void printType(Table_lines * data){
 		printf("@%s = global %s \n",data->name,integer);
 	}
 	
-
-   	
-
-
-
-
-
-
-
-
-
 }
-
 
 void generator(Node *node,Table_structure *first_table){
 	
@@ -63,6 +48,19 @@ void generator(Node *node,Table_structure *first_table){
 
 	
 }
+
+
+
+
+
+
+
+   	
+
+
+
+
+
 
 
 
