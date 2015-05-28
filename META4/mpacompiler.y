@@ -173,6 +173,7 @@ int main(int argc, char * argv[]) {
 		printAll(root,0);
 		printf("\n");
 		print_tables(create_tables(root));
+		generator(root,create_tables(root));
 	}
 
 	return 0;
