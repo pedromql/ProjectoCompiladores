@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include "structures.h"
 #include "thirdfase.h"
 
 void generator(Node *node,Table_structure *first_table){
