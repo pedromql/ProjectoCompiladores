@@ -4,8 +4,14 @@
 
 typedef struct _strings {
 	char * value;
-	struct _stringss * next;
+	struct _strings * next;
 } Strings;
+
+
+void imprime_strings(Strings * );
+void generator(Node *,Table_structure *);
+void save_string(Strings * , char * );
+void find_strings(Node * , Strings * );
 
 
 void generator(Node *node,Table_structure *first_table){
@@ -16,6 +22,7 @@ void generator(Node *node,Table_structure *first_table){
 	aux_table=aux_table->next->next;//esta na program symbol table 
 
 	Strings * saved_strings = (Strings *)malloc(sizeof(Strings));
+	printf("\n\n");
 
 	if(aux_tree != NULL)
 	{
@@ -29,9 +36,9 @@ void generator(Node *node,Table_structure *first_table){
 			printf("@.strFalse = private unnamed_addr constant [6 x i8] c\"FALSE\\00\"\n"); 
 			printf("\n"); 
 			printf("declare i32 @printf(i8*, ...)\n"); 
-			printf("\n");''
+			printf("\n");
 
-			find_strings(aux, saved_strings);
+			find_strings(aux_tree, saved_strings);
 			imprime_strings(saved_strings);
 
 		}
@@ -41,6 +48,7 @@ void generator(Node *node,Table_structure *first_table){
 }
 
 void save_string(Strings * saved_strings, char * string) { //saves the latest found string in the last position
+	
 	Strings * temp = saved_strings;
 
 	while (temp->next != NULL) { //iterate until last saved string
@@ -72,10 +80,11 @@ void find_strings(Node * node, Strings * saved_strings){
 }
 
 void imprime_strings(Strings * saved_strings) {
+	
 	Strings * temp = saved_strings;
 
 	while (temp->next != NULL) {
-		printf("%s\n", temp);
+		printf("%s\n", temp->value);
 		temp = temp->next;
 	}
 }
@@ -89,7 +98,7 @@ void imprime_strings(Strings * saved_strings) {
 
 
 
-}
+
 
 
 
