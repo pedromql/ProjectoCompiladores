@@ -59,6 +59,8 @@ void save_string(Strings * saved_strings, char * string) { //saves the latest fo
 
 	temp = temp->next;
 
+	printf("temp-next=%s\n",temp->value);
+
 	strcpy(temp->value, string);
 
 }
@@ -67,12 +69,15 @@ void find_strings(Node * node, Strings * saved_strings){
 
     if (node == NULL) return;
     
+    //printf("node value=%s tipo=%s \n",node->id, node->type);
     
-    printf("%s\n",node->id);
     if(strcmp(node->type,"String")==0)
     {
+    	printf("node value=%s\n",node->value );
+    	printf("@.str.%d = private unnamed_addr constant [%lu x i8] c\"%s\"\n\n",str_count,strlen(raiz->valor),raiz->valor);
+		
     	save_string(saved_strings, node->value);
-
+    	
     }
 
     find_strings(node->son, saved_strings);
@@ -88,51 +93,6 @@ void imprime_strings(Strings * saved_strings) {
 		temp = temp->next;
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*char* checkType(arvore no,tabela_simbolos ts){
-	
-	tabela_simbolos tab_temp;
-	tabela_elementos elem_temp = tab_temp->elemento;
-
-	char* integer = "i32";
-	char* real = "double";
-	char* boolean = "i1";
-
-	while(elem_temp!=NULL){
-		
-		if(strcmp(elem_temp->nome,no->tipo)==0){
-			if(strcmp(elem_temp->tipo,"integer")==0){
-				return integer;
-			}
-			if(strcmp(elem_temp->tipo,"real")){
-				return real;
-			}
-			if(strcmp(elem_temp->tipo,"boolean")==0){
-				return boolean;
-			}
-		}
-	}
-}*/
-
-
-
-
-
-
-
 
 
 
