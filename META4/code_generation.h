@@ -39,6 +39,7 @@ void generator(Node *node,Table_structure *first_table){
 			printf("\n");
 
 			find_strings(aux_tree, saved_strings);
+
 			imprime_strings(saved_strings);
 
 		}
@@ -51,17 +52,21 @@ void save_string(Strings * saved_strings, char * string) { //saves the latest fo
 	
 	Strings * temp = saved_strings;
 
+
 	while (temp->next != NULL) { //iterate until last saved string
 		temp = temp->next;
 	}
 
-	temp->next = (Strings *)malloc(sizeof(Strings));
+	if (temp->value != NULL) {
+		temp->next = (Strings *)malloc(sizeof(Strings));
 
-	temp = temp->next;
+		temp = temp->next;
+	}
 
-	printf("temp-next=%s\n",temp->value);
+	temp->value = (char *)malloc(strlen(string)*sizeof(char));
 
-	strcpy(temp->value, string);
+	strcpy(temp->value, string+sizeof(char));
+	temp->value[strlen(temp->value)-1] = '\0';
 
 }
 
@@ -88,8 +93,8 @@ void imprime_strings(Strings * saved_strings) {
 	
 	Strings * temp = saved_strings;
 
-	while (temp->next != NULL) {
-		printf("%s\n", temp->value);
+	while (temp != NULL) {
+		printf("%s\\00\n", temp->value);
 		temp = temp->next;
 	}
 }
