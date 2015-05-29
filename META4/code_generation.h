@@ -2,6 +2,11 @@
 #include <stdio.h>
 #include <string.h>
 
+typedef struct _strings {
+	char * value;
+	struct _stringss * next;
+} Strings;
+
 
 void generator(Node *node,Table_structure *first_table){
 	
@@ -9,6 +14,8 @@ void generator(Node *node,Table_structure *first_table){
 	Table_structure *aux_table=first_table;
 	Table_lines *aux_data;
 	aux_table=aux_table->next->next;//esta na program symbol table 
+
+	Strings * saved_strings = (Strings *)malloc(sizeof(Strings));
 
 	if(aux_tree != NULL)
 	{
@@ -24,7 +31,8 @@ void generator(Node *node,Table_structure *first_table){
 			printf("declare i32 @printf(i8*, ...)\n"); 
 			printf("\n");''
 
-			find_strings();
+			find_strings(aux, saved_strings);
+			imprime_strings(saved_strings);
 
 		}
 
@@ -32,27 +40,44 @@ void generator(Node *node,Table_structure *first_table){
 	
 }
 
-void find_strings(Node * node,int level){
+void save_string(Strings * saved_strings, char * string) { //saves the latest found string in the last position
+	Strings * temp = saved_strings;
 
-    int i;
+	while (temp->next != NULL) { //iterate until last saved string
+		temp = temp->next;
+	}
+
+	temp->next = (Strings *)malloc(sizeof(Strings));
+
+	temp = temp->next;
+
+	strcpy(temp->value, string);
+
+}
+
+void find_strings(Node * node, Strings * saved_strings){
+
     if (node == NULL) return;
-    for (i = 0; i < level; i++) {
-        
-    }
+    
     
     printf("%s\n",node->id);
     if(strcmp(node->type,"String")==0)
     {
-
-
-
-
-
+    	save_string(saved_strings, node->value);
 
     }
 
-    printAll(node->son,level+1);
-    printAll(node->brother,level);
+    find_strings(node->son, saved_strings);
+    find_strings(node->brother, saved_strings);
+}
+
+void imprime_strings(Strings * saved_strings) {
+	Strings * temp = saved_strings;
+
+	while (temp->next != NULL) {
+		printf("%s\n", temp);
+		temp = temp->next;
+	}
 }
 
 
