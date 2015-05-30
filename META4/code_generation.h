@@ -17,6 +17,8 @@ void imprime_strings(Strings * );
 void generator(Node *,Table_structure *);
 void save_string(Strings * , char * );
 void find_strings(Node * , Strings * );
+void iterate_tree(Node *);
+void vardecl_funtion(Node *);
 
 
 void generator(Node *node,Table_structure *first_table){
@@ -47,9 +49,7 @@ void generator(Node *node,Table_structure *first_table){
 			find_strings(aux_tree, saved_strings);
 			imprime_strings(saved_strings);
 
-			//percorrer a restante arvore
-
-
+			iterate_tree(aux_tree);			
 
 		}
 
@@ -108,8 +108,46 @@ void imprime_strings(Strings * saved_strings) {
 }
 
 
+void iterate_tree(Node * root) {
+	Node * tree = root;
+
+	tree = tree->son->brother; //set to varpart
+
+	if (tree->son != NULL) {
+		tree = tree->son;
+		while(tree != NULL) {
+			vardecl_funtion(tree);
+			tree = tree->brother;
+		}
+		
+	}
+
+
+}
+
+void vardecl_funtion(Node * varpart) {
+	Node * temp = varpart;
+	int type = 0;
+
+	temp = temp->son; //first id
+
+	while (temp->brother != NULL) { //get to last id
+		temp = temp->brother;
+	}
+	if (strcmp(temp->value,"integer") == 0) type = 0;
+	else if (strcmp(temp->value,"real") == 0) type = 1;
+	else if (strcmp(temp->value,"boolean") == 0) type = 2;
+
+	temp = varpart->son; //first id
+
+	while (temp->brother != NULL) {
+		if (type == 0) printf("@%s = common global %s 0\n",temp->value,integer);
+		else if (type == 1) printf("@%s = common global %s 0\n",temp->value,real);
+		else if (type == 2) printf("@%s = common global %s\n",temp->value,boolean);
+		temp = temp->brother;
+	}
 
 
 
-
+}
 
