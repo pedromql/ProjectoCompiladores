@@ -86,7 +86,7 @@ void find_strings(Node * node, Strings * saved_strings){
 
     if (node == NULL) return;
     
-    //printf("node value=%s tipo=%s \n",node->id, node->type);
+    printf("node value=%s tipo=%s valor->%s \n",node->id, node->type, node->value);
     if(strcmp(node->type,"String")==0)
     {
     	//printf("node value=%s\n",node->value );
