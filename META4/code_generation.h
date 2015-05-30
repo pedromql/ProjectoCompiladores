@@ -12,6 +12,8 @@ void imprime_strings(Strings * );
 void generator(Node *,Table_structure *);
 void save_string(Strings * , char * );
 void find_strings(Node * , Strings * );
+void iterate_tree(Node *);
+void vardecl_funtion(Node *);
 
 
 void generator(Node *node,Table_structure *first_table){
@@ -39,8 +41,9 @@ void generator(Node *node,Table_structure *first_table){
 			printf("\n");
 
 			find_strings(aux_tree, saved_strings);
-
 			imprime_strings(saved_strings);
+
+			iterate_tree(aux_tree);			
 
 		}
 
@@ -96,9 +99,44 @@ void imprime_strings(Strings * saved_strings) {
 }
 
 
+void iterate_tree(Node * root) {
+	Node * tree = root;
+
+	tree = tree->son->brother; //set to varpart
+
+	if (tree->son != NULL) {
+		tree = tree->son;
+		while(tree != NULL) {
+			vardecl_funtion(tree);
+		}
+		
+	}
+
+
+}
+
+void vardecl_funtion(Node * varpart) {
+	Node * temp = varpart;
+	int type = 0;
+
+	temp = temp->son; //first id
+
+	while (temp->brother != NULL) { //get to last id
+		temp = temp->brother;
+	}
+	if (strcmp(temp->type,"integer") == 0) type = 0;
+	else if (strcmp(temp->type,"real") == 0) type = 1;
+	else if (strcmp(temp->type,"boolean") == 0) type = 2;
+
+	temp = varpart->son; //first id
+
+	while (temp->brother != NULL) {
+		
+	}
 
 
 
+}
 
 
 
