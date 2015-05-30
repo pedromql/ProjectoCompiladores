@@ -7,6 +7,11 @@ typedef struct _strings {
 	struct _strings * next;
 } Strings;
 
+int str_num=1;
+char* integer = "i32";
+char* real = "double";
+char* boolean = "i1";
+
 
 void imprime_strings(Strings * );
 void generator(Node *,Table_structure *);
@@ -40,6 +45,7 @@ void generator(Node *node,Table_structure *first_table){
 			printf("declare i32 @printf(i8*, ...)\n"); 
 			printf("\n");
 
+			//ler e imprimir strings
 			find_strings(aux_tree, saved_strings);
 			imprime_strings(saved_strings);
 
@@ -71,17 +77,20 @@ void save_string(Strings * saved_strings, char * string) { //saves the latest fo
 	strcpy(temp->value, string+sizeof(char));
 	temp->value[strlen(temp->value)-1] = '\0';
 
+	printf("@.str.%d = private unnamed_addr constant [%lu x i8] c\"%s\\00\"\n\n",str_num,strlen(temp->value),temp->value);
+	str_num++;
+
 }
 
 void find_strings(Node * node, Strings * saved_strings){
 
     if (node == NULL) return;
     
-    
+    //printf("node value=%s tipo=%s \n",node->id, node->type);
     if(strcmp(node->type,"String")==0)
     {
-    	save_string(saved_strings, node->value);
-
+    	//printf("node value=%s\n",node->value );
+    	save_string(saved_strings, node->value);	
     }
 
     find_strings(node->son, saved_strings);
@@ -114,73 +123,4 @@ void iterate_tree(Node * root) {
 
 
 }
-
-void vardecl_funtion(Node * varpart) {
-	Node * temp = varpart;
-	int type = 0;
-
-	temp = temp->son; //first id
-
-	while (temp->brother != NULL) { //get to last id
-		temp = temp->brother;
-	}
-	if (strcmp(temp->type,"integer") == 0) type = 0;
-	else if (strcmp(temp->type,"real") == 0) type = 1;
-	else if (strcmp(temp->type,"boolean") == 0) type = 2;
-
-	temp = varpart->son; //first id
-
-	while (temp->brother != NULL) {
-		
-	}
-
-
-
-}
-
-
-
-
-
-
-
-
-
-/*char* checkType(arvore no,tabela_simbolos ts){
-	
-	tabela_simbolos tab_temp;
-	tabela_elementos elem_temp = tab_temp->elemento;
-
-	char* integer = "i32";
-	char* real = "double";
-	char* boolean = "i1";
-
-	while(elem_temp!=NULL){
-		
-		if(strcmp(elem_temp->nome,no->tipo)==0){
-			if(strcmp(elem_temp->tipo,"integer")==0){
-				return integer;
-			}
-			if(strcmp(elem_temp->tipo,"real")){
-				return real;
-			}
-			if(strcmp(elem_temp->tipo,"boolean")==0){
-				return boolean;
-			}
-		}
-	}
-}*/
-
-
-
-
-
-
-
-
-
-
-
-
-
 
