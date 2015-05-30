@@ -7,6 +7,11 @@ typedef struct _strings {
 	struct _strings * next;
 } Strings;
 
+int str_num=1;
+char* integer = "i32";
+char* real = "double";
+char* boolean = "i1";
+
 
 void imprime_strings(Strings * );
 void generator(Node *,Table_structure *);
@@ -38,9 +43,13 @@ void generator(Node *node,Table_structure *first_table){
 			printf("declare i32 @printf(i8*, ...)\n"); 
 			printf("\n");
 
+			//ler e imprimir strings
 			find_strings(aux_tree, saved_strings);
-
 			imprime_strings(saved_strings);
+
+			//percorrer a restante arvore
+
+
 
 		}
 
@@ -68,6 +77,9 @@ void save_string(Strings * saved_strings, char * string) { //saves the latest fo
 	strcpy(temp->value, string+sizeof(char));
 	temp->value[strlen(temp->value)-1] = '\0';
 
+	printf("@.str.%d = private unnamed_addr constant [%lu x i8] c\"%s\\00\"\n\n",str_num,strlen(temp->value),temp->value);
+	str_num++;
+
 }
 
 void find_strings(Node * node, Strings * saved_strings){
@@ -75,14 +87,10 @@ void find_strings(Node * node, Strings * saved_strings){
     if (node == NULL) return;
     
     //printf("node value=%s tipo=%s \n",node->id, node->type);
-    
     if(strcmp(node->type,"String")==0)
     {
-    	printf("node value=%s\n",node->value );
-    	printf("@.str.%d = private unnamed_addr constant [%lu x i8] c\"%s\"\n\n",str_count,strlen(raiz->valor),raiz->valor);
-		
-    	save_string(saved_strings, node->value);
-    	
+    	//printf("node value=%s\n",node->value );
+    	save_string(saved_strings, node->value);	
     }
 
     find_strings(node->son, saved_strings);
