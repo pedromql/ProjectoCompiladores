@@ -10,13 +10,9 @@ typedef struct _tablelines      Table_lines;
 
 //dados especificos da tabela
 typedef struct _tablestructure{
-    //proxima tabela
-    Table_structure * next;
-    
+    Table_structure * next;//proxima tabela
     char *table_name;
-    //linhas da tabela
-    Table_lines * data;
-    
+    Table_lines * data;//linhas da tabela
 }TableStructure;
 
 //campo generico das tabelas, corresponde a uma linha
@@ -100,7 +96,7 @@ void funcDef2_function(Node * , Table_structure * );
 
 
 
-
+//creates first 2 tables and the program table , returns outer table
 Table_structure * create_tables(Node * node){
     
     //criar espaço para base
@@ -126,8 +122,7 @@ Table_structure * create_tables(Node * node){
     
     ast(node, tabelaexterior, lastTable);
     
-    return tabelaexterior;
-    
+    return tabelaexterior;   
 }
 
 //cria estrutura base e devolve ponteiro
@@ -143,6 +138,7 @@ Table_lines* generic_lines_table(void){
     return aux;
 }
 
+//insert a new line in _tablelines
 void insert_data(Table_lines *line,char *name, char *type, char *flag, char *value){
     
     Table_lines * aux=(Table_lines*)calloc(1,sizeof(Table_lines));
@@ -171,11 +167,11 @@ void create_base_structure_table(Table_structure * temp){
     aux->data->flag = flag[flag_return];
     aux->data->value = NULL;
     temp->next=aux;
-    
 }
 
 //cria nova tabela "mãe" e adiciona no fim, retorna ponteiro para a ultima
 Table_structure* create_generic_table(Table_structure *temp, char* nome){
+    
     Table_structure * aux;
     aux=(Table_structure*)calloc(1,sizeof(Table_structure));
     aux->table_name=nome;
@@ -186,10 +182,7 @@ Table_structure* create_generic_table(Table_structure *temp, char* nome){
     return temp->next;
 }
 
-/*
- * Adds a new line after the last one
- * Sets new line contents to be equal to the arguments
- */
+// Adds a new line after the last one, Sets new line contents to be equal to the arguments
 Table_lines * first_line(char *name, char *type, char *flag, char *value){
     Table_lines * new = (Table_lines *)malloc(sizeof(Table_lines));
     
@@ -201,6 +194,10 @@ Table_lines * first_line(char *name, char *type, char *flag, char *value){
     
     return new;
 }
+
+
+
+
 
 void ast(Node * root, Table_structure * first_table, Table_structure * last_table) {
     if (root != NULL) {

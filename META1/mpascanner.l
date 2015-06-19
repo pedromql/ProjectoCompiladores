@@ -1,4 +1,5 @@
 %option case-insensitive
+
 letra				[a-z]
 num 				[0-9]+
 reserved			"abs"|"arctan"|"array"|"case"|"char"|"chr"|"const"|"cos"|"dispose"|"downto"|"eof"|"eoln"|"exp"|"file"|"for"|"get"|"goto"|"in"|"input"|"label"|"ln"|"maxint"|"new"|"nil"|"odd"|"of"|"ord"|"pack"|"packed"|"page"|"pred"|"procedure"|"put"|"read"|"readln"|"record"|"reset"|"rewrite"|"round"|"set"|"sin"|"sqr"|"sqrt"|"succ"|"text"|"to"|"trunc"|"type"|"unpack"|"with"|"write"
@@ -22,9 +23,6 @@ reserved			"abs"|"arctan"|"array"|"case"|"char"|"chr"|"const"|"cos"|"dispose"|"d
 <TESTECOMENT>.				{col++;};
 <TESTECOMENT>\n				{line++; col=1;};
 <TESTECOMENT><<EOF>>		{printf("Line %d, col %lu: unterminated comment\n",line_aux,col_aux); return 0;};
-
-
-
 
 {num}								{col+=yyleng; printf("INTLIT(%s)\n",yytext);}
 {num}("."{num})?(e[-+]?{num})?		{col+=yyleng; printf("REALLIT(%s)\n",yytext);}

@@ -10,6 +10,16 @@ typedef struct _node {
 }Node;
 
 
+typedef struct _table{
+
+    char *name;
+
+
+
+
+
+}Table;
+
 
 Node * make_node(char *name,char *type,char *value,Node *son,Node *brother){
     
@@ -57,7 +67,11 @@ void addChild(Node * temp, Node * child) {
 
 
 /*
-esta funcao pode dar bode o prof aconselhou a fazer uma versao iterativa para ver os tipos dos dados
+
+
+esta funcao pode dar merda o prof aconselhou a fazer uma versao iterativa para ver os tipos dos dados
+
+
 */
 void printAll(Node * node,int level) {
     int i;

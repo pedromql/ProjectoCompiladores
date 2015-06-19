@@ -23,13 +23,14 @@ reserved			"abs"|"arctan"|"array"|"case"|"char"|"chr"|"const"|"cos"|"dispose"|"d
 
 %%
 {reserved}							{ return RESERVED; }
-("(*")						{line_aux = line; col_aux = col; BEGIN TESTECOMENT;}
-("{")						{line_aux = line; col_aux = col; BEGIN TESTECOMENT;}
-<TESTECOMENT>("*)")			{BEGIN 0; }
-<TESTECOMENT>("}")			{BEGIN 0; }
-<TESTECOMENT>.				{};
-<TESTECOMENT>\n				{line++; col=1;};
+("(*")								{line_aux = line; col_aux = col; BEGIN TESTECOMENT;}
+("{")								{line_aux = line; col_aux = col; BEGIN TESTECOMENT;}
+<TESTECOMENT>("*)")					{BEGIN 0; }
+<TESTECOMENT>("}")					{BEGIN 0; }
+<TESTECOMENT>.						{};
+<TESTECOMENT>\n						{line++; col=1;};
 <TESTECOMENT><<EOF>>				{printf("Line %d, col %lu: unterminated comment\n",line_aux,col_aux); return 0;};
+
 "'"([^\n']|'')*(("''")|[<<EOF>>])*	{printf("Line %d, col %d: unterminated string\n",line,yylloc.first_column);}
 ":="								{ 											return ASSIGN			;}
 "begin"								{ 											return BEG 				;}
@@ -60,7 +61,7 @@ reserved			"abs"|"arctan"|"array"|"case"|"char"|"chr"|"const"|"cos"|"dispose"|"d
 "+"|"-"|"*"|"/"						{ 											return *yytext 			;}							
 "mod"								{ 											return MOD				;}
 "div"								{ 											return DIV				;}
-[a-z][a-z0-9]*						{yylval.u_col=col;  yylval.str = (char*)strdup(yytext); 		return ID 				;}
+[a-z][a-z0-9]*						{ yylval.u_col=col;  yylval.str = (char*)strdup(yytext); 		return ID 				;}
 {num}								{ yylval.str = (char*)strdup(yytext); 		return INTLIT			;}
 {num}("."{num})?(e[-+]?{num})?		{ yylval.str = (char*)strdup(yytext); 		return REALLIT 			;}
 "'"([^\n']|'')*"'"					{ yylval.str = (char*)strdup(yytext); 		return STRING 			;}

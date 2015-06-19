@@ -24,7 +24,7 @@ char * name_var2;
 
 %}
 
-%left OR AND NOT
+
 
 %token BEG  //equivalente a begin para evitar conflitos com o begin das macros
 %token ASSIGN COLON COMMA DO  DOT END ELSE FORWARD FUNCTION IF LBRAC NOT OUTPUT PARAMSTR PROGRAM RBRAC
@@ -36,6 +36,8 @@ char * name_var2;
 %token <str> REALLIT 
 %token <str> STRING 
 
+%left OR AND NO
+
 %nonassoc THEN
 %nonassoc ELSE
 %nonassoc '<' '>' '='
@@ -43,7 +45,6 @@ char * name_var2;
 
 %union{
 	char* str;
-	int u_line,u_col;
 	struct _node * node;
 }
 
@@ -157,13 +158,15 @@ repParamList 		: ',' Expr repParamList 				{addBrother($2,$3); $$ = $2;};
 					|										{$$ = NULL;};
 
 
-
-
 %%
+
+
+
 
 void yyerror (char *s) {
 	 printf ("Line %d, col %d: %s: %s\n", line, (int)(col)-(int)strlen(yytext), s, yytext);
 }
+
 
 int main(int argc, char * argv[]) {
 	yyparse();
@@ -171,9 +174,9 @@ int main(int argc, char * argv[]) {
 	if ( argc == 2 && strcmp(argv[1],"-t") == 0) printAll(root,0);
 	else if (argc == 2 && strcmp(argv[1],"-s") == 0) print_tables(create_tables(root));
 	else if (argc == 3) {
-		printAll(root,0);
-		printf("\n");
-		print_tables(create_tables(root));
+		//printAll(root,0);
+		//printf("CHUMAWAMBA\n");
+		//print_tables(create_tables(root));
 		generator(root,create_tables(root));
 	}
 

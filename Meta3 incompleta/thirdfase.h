@@ -1,12 +1,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <ctype.h>
-//ma#define DEBUG 0
 
 
 
-
-//----------------------- tabelas
+//-------------------------------- tabelas
 typedef struct _tablestructure  Table_structure;
 typedef struct _tablelines      Table_lines;
 
@@ -29,6 +27,8 @@ typedef struct _tablelines{
     char * value;
     Table_lines *next; // proxima linha da tabela
 }TableLines;
+
+
 
 
 //mais simplificado
@@ -88,20 +88,14 @@ char *lower_case(char * );
 void print_tables(Table_structure *);
 int check_var(char * );
 
-void varDecl_funtion(Node * ,Table_structure *, Table_structure *);
+
+void varDecl_funtion(Node * , Table_structure *);
 void funcPart_function(Node * , Table_structure  *);
 void funcDef_function(Node * , Table_structure * );
 void funcDecl_function(Node * , Table_structure * );
 void funcDef2_function(Node * , Table_structure * );
 
-//verificar erros
-void check_for_duplicates(Table_structure *, char * ,int ,int );
-void error_symbolalareadydefined(char * ,int , int );
-void check_symbol_not_defined(Node * ,Table_structure *, Table_structure *, char * ,int,int);
-int  error_symbolnotdefined(char * ,int , int );
-int  error_typeidentifierexpected(int , int );
 
-int error_imcompatibletypeinstatement(int, int, char *, char *);
 
 
 
@@ -131,7 +125,8 @@ Table_structure * create_tables(Node * node){
     
     ast(node, tabelaexterior, lastTable);
     
-    return tabelaexterior;   
+    return tabelaexterior;
+    
 }
 
 //cria estrutura base e devolve ponteiro
@@ -175,6 +170,7 @@ void create_base_structure_table(Table_structure * temp){
     aux->data->flag = flag[flag_return];
     aux->data->value = NULL;
     temp->next=aux;
+    
 }
 
 //cria nova tabela "mãe" e adiciona no fim, retorna ponteiro para a ultima
@@ -208,10 +204,11 @@ Table_lines * first_line(char *name, char *type, char *flag, char *value){
 void ast(Node * root, Table_structure * first_table, Table_structure * last_table) {
     if (root != NULL) {
         if (strcmp(root->type, "VarDecl") == 0) {
-            varDecl_funtion(root,first_table, last_table);
+            varDecl_funtion(root, last_table);
         }
         else if (strcmp(root->type, "FuncPart") == 0) {
             funcPart_function(root,last_table);
+            
             ast(root->son,first_table,last_table);
             
         }
@@ -227,9 +224,6 @@ void ast(Node * root, Table_structure * first_table, Table_structure * last_tabl
             funcDef2_function(root,first_table);
             
         }
-        else if (strcmp(root->type, "IfElse") == 0) {
-            printf("IFELSE\n");
-        }
         else { //if there is nothing to be done it continues to the son
             ast(root->son,first_table,last_table);
         }
@@ -237,48 +231,22 @@ void ast(Node * root, Table_structure * first_table, Table_structure * last_tabl
     }
 }
 
-void varDecl_funtion(Node * parent , Table_structure *first_table, Table_structure *last_table) {
-   
-    
+void varDecl_funtion(Node * parent, Table_structure *last_table) {
     Node * temp = parent->son; //node temp is the first occurrence of a id
     Node * var_nodes = parent->son; //first variable
     int variable_type;
-    char * compareduplicates;
-    char * compareTypeValue;
     
     while(temp->brother != NULL)  {//get to last brother
         temp = temp->brother;
     }
     variable_type = check_var(temp->value); //get the variable type
-
-    //saca o tipo da variavel sem meter os underscores
-    compareTypeValue=(char *)calloc(1, sizeof(char));
-    strcpy(compareTypeValue, temp->value);
     
     
     while(var_nodes->brother != NULL) { //iterate through all variables
-
-        //debug
-        #ifdef DEBUG
-        printf("===========VarDecl=====%s\n",var_nodes->value );
-        #endif 
-
         if (last_table->data == NULL) { //if last_table has no data yet, a first line is created
             last_table->data = first_line(lower_case(var_nodes->value), value[variable_type], NULL, NULL);
         }
         else { //the function called inserts the new var at the end of the table
-
-            //comparar duplicados
-            compareduplicates=(char *)calloc(1,sizeof(char));
-            strcpy(compareduplicates,var_nodes->value);
-            check_for_duplicates(last_table,lower_case(var_nodes->value),var_nodes->line,var_nodes->col);
-            //se nao saiu é porque nao ha duplicados
-
-            //ver type identifier e token not defined
-            Node *aux=parent;
-            check_symbol_not_defined(aux,first_table,last_table,compareTypeValue,var_nodes->line,var_nodes->col);
-            //
-
             insert_data(last_table->data, lower_case(var_nodes->value), value[variable_type], NULL,NULL);
         }
         
@@ -302,22 +270,18 @@ void funcPart_function(Node * parent, Table_structure  *last_table) {
     }
 }
 
-void funcDef_function(Node * parent, Table_structure * first_table){
-
+void funcDef_function(Node * parent, Table_structure * first_table) {
     Table_structure * new_table = create_generic_table(first_table, tables_name[function_table]);
+    
     Node * temp;
     Node * too_many_params;
-    char * compareTypeValue;
-    char * compareduplicates;
     
     int variable_type = check_var(parent->son->brother->brother->value); //variable_type is the 3rd son of the funcDef
     
-    //nova tabela
     new_table->data = first_line(lower_case(parent->son->value), value[variable_type], flag[flag_return], NULL); //first line has the return type of function and it's name (funcdef->son = id(name_of_function))
     
     if (parent->son->brother->son != NULL) {
         too_many_params = parent->son->brother->son;
-
         while(too_many_params != NULL) {
             
             if (too_many_params->son != NULL) { //if function has parameters
@@ -327,51 +291,13 @@ void funcDef_function(Node * parent, Table_structure * first_table){
                     temp = temp->brother;
                 }
                 
-                //sacar o tipo das variaveis
                 variable_type = check_var(temp->value); //saves variable type
-
-                //ver o tipo sem underscores---------------------------------------------------------------
-                compareTypeValue=(char *)calloc(1, sizeof(char));
-                strcpy(compareTypeValue, temp->value);
-
                 
                 temp = too_many_params->son; //temp equals first id parameter again
                 
                 while(temp->brother != NULL){ //add all function parameters to the table with it's name and type
-                    
-                    //debug
-                    #ifdef DEBUG
-                    printf("===========FuncDef=====%s\n",temp->value );
-                    #endif 
-
-                    if(strcmp(too_many_params->type,"VarParams") == 0){ 
-
-                        //duplicados------------------------------------------------------------------------------
-                        compareduplicates = (char *)calloc(1, sizeof(char));//alocar para novo simbolo
-                        strcpy(compareduplicates, temp->value);
-                        check_for_duplicates(new_table,lower_case(temp->value),temp->line, temp->col);
-                        //se nao saiu é porque nao ha duplicados
-                        ///
-                        Node *aux=parent;
-                        check_symbol_not_defined(aux,first_table,new_table,compareTypeValue,temp->line, temp->col);
-                        ///_____________________________________________________________________________________
-                        insert_data(new_table->data, lower_case(temp->value), value[variable_type], flag[flag_varparam], NULL);
-
-
-                    }
-                    else {
-                            //duplicados-------------------------------------------------------------------------
-                            compareduplicates = (char *)calloc(1, sizeof(char));//alocar para novo simbolo
-                            strcpy(compareduplicates, temp->value);
-                            check_for_duplicates(new_table,lower_case(temp->value),temp->line, temp->col);
-                            //se nao saiu é porque nao ha duplicados
-                            
-                            //ver symbol not defined
-                            Node *aux=parent;
-                            check_symbol_not_defined(aux,first_table,new_table,compareTypeValue,temp->line, temp->col);
-                            ///________________________________________________________________________________
-                        insert_data(new_table->data, lower_case(temp->value), value[variable_type], flag[flag_param], NULL);
-                    }
+                    if (strcmp(too_many_params->type,"VarParams") == 0) insert_data(new_table->data, lower_case(temp->value), value[variable_type], flag[flag_varparam], NULL);
+                    else insert_data(new_table->data, lower_case(temp->value), value[variable_type], flag[flag_param], NULL);
                     temp = temp->brother;
                 }
                 
@@ -395,22 +321,6 @@ void funcDef_function(Node * parent, Table_structure * first_table){
             temp = too_many_params->son; //temp is the first var again
             
             while (temp->brother != NULL) { //add variables to the with it's name and type
-
-                    #ifdef DEBUG
-                    printf("===========FuncDef-parte2=====%s\n",temp->value );
-                    #endif 
-                //duplicados-------------------------------------------------------------------------
-                            compareduplicates = (char *)calloc(1, sizeof(char));//alocar para novo simbolo
-                            strcpy(compareduplicates, temp->value);
-                            check_for_duplicates(new_table,lower_case(temp->value),temp->line, temp->col);
-                            //se nao saiu é porque nao ha duplicados
-                            
-                            //ver symbol not defined
-                            Node *aux=parent;
-                            check_symbol_not_defined(aux,first_table,new_table,compareTypeValue,temp->line, temp->col);
-                            ///________________________________________________________________________________
-
-
                 insert_data(new_table->data, lower_case(temp->value), value[variable_type], NULL, NULL);
                 temp = temp->brother;
             }
@@ -448,12 +358,8 @@ void funcDecl_function(Node * parent, Table_structure * first_table) {
             temp = too_many_params->son; //temp is the first paramenter again
             
             while (temp->brother != NULL) { //iterate through all the variables and add to the table
-                if (strcmp(too_many_params->type,"VarParams") == 0) 
-                    insert_data(new_table->data, lower_case(temp->value), value[variable_type], flag[flag_varparam], NULL);
-                else 
-                    insert_data(new_table->data, lower_case(temp->value), value[variable_type], flag[flag_param], NULL); //adds the variable to the table with its name and type
-                
-
+                if (strcmp(too_many_params->type,"VarParams") == 0) insert_data(new_table->data, lower_case(temp->value), value[variable_type], flag[flag_varparam], NULL);
+                else insert_data(new_table->data, lower_case(temp->value), value[variable_type], flag[flag_param], NULL); //adds the variable to the table with its name and type
                 temp = temp->brother;
             }
 
@@ -555,118 +461,7 @@ void print_tables(Table_structure *first_table){
 }
 
 
-//tratamento de erros-----------------------------------------------------------------------------------------------------------------------------------------------------
-void check_for_duplicates(Table_structure *last, char * s,int line,int col){
-    Table_lines * new = last->data;//é preciso copiar para nao perder o contexto dos ponteiros
-    int global=0;
-    while( new != NULL){
-        
-        if(strcmp(s,new->name)==0){
-            global=1;
-            break;
-        }
-        new=new->next;
-    }
-    if(global){
-        error_symbolalareadydefined(s,line,col);    
-        //exit(0);
-    }
-}
-//Symbol <token> already defined
-void error_symbolalareadydefined(char * symbol,int line, int col){
-    printf("Line %d, col %d: Symbol %s already defined\n", line, col,symbol);
-}
 
-void check_symbol_not_defined(Node * parent,Table_structure *first_table, Table_structure *last_table, char * type,int line,int col){
-
-    int global=1;
-    //percorrer a tabela actual e ver se existe uma variavel com o nome igual a type
-    // 1-> SE existir ver se o tipo dessa variavel é type
-            //1.1-> se for type insere
-            //1.2-> se não Id expected
-    //  2-> se não existir em nenhuma é type identifier expected
-    //se não passo para a program table
-    //se nao passo para a outer table
-    Table_lines * tabelaexterior=first_table->data;                     //tabela exterior
-    Table_lines * program_table=first_table->next->next->data;          //tabela do program
-    Table_lines * current_line = last_table->data;                      //tabela da funcao
-
-    //percorre a function table, vê se existe alguma variavel com o nome=tipo
-    while( current_line != NULL){   
-        
-        if(strcmp(type,current_line->name)==0){
-            //type identifier expected
-            if(strcmp("_type_",current_line->type)==0){
-                global=0;
-                break;
-
-            }
-            else{
-                error_typeidentifierexpected(line,col);
-                //exit(0);
-                break;
-
-            }
-        }
-        current_line=current_line->next;
-    }
-
-    //percorre a program table
-    while( program_table != NULL){ 
-
-        if(strcmp(type,program_table->name)==0){
-            
-            if(strcmp("_type_",program_table->type)==0){//verifica se o que foi definido é um _type_
-                global=0;
-                break;
-            }
-            else{
-                error_typeidentifierexpected(line,col);
-                //exit(0);
-                break;
-            }
-        }
-        
-        program_table=program_table->next;
-    }
-    //outer table
-    while( tabelaexterior != NULL){ 
-        if(strcmp(type,tabelaexterior->name)==0){//se o nome for igual ao tipo tem de ver se esse nome é do tipo _type_
-            
-            if(strcmp("_type_",tabelaexterior->type)==0){//Pode inserir 
-                global=0;
-                break;
-            }
-            else if(strcmp("_type_",tabelaexterior->type)!=0){//se não for dá erro de id expected
-                error_typeidentifierexpected(line,col);
-                //exit(0);
-                break;
-            }
-            
-        }
-        tabelaexterior=tabelaexterior->next;
-    }
-
-    if(global){
-        //error_typeidentifierexpected(10,10);
-        error_symbolnotdefined(type,line,col); 
-        //exit(0);
-    }
-}
-
-int  error_symbolnotdefined(char * symbol,int line, int col){
-    printf("Line %d, col %d: Symbol %s not defined\n", line,(int) col,symbol);
-    return 0;
-}
-//Type identifier expected
-int  error_typeidentifierexpected(int line, int col){
-    printf("Line %d, col %d: Type identifier expected\n", line,col);
-    return 0;
-}
-
-int error_imcompatibletypeinstatement(int line, int col, char * type_1, char * type_2) {
-    return 0;
-}
 
 
 

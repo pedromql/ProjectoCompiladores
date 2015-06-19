@@ -162,7 +162,6 @@ repParamList 		: ',' Expr repParamList 				{addBrother($2,$3); $$ = $2;};
 
 void yyerror (char *s) {
 	 printf ("Line %d, col %d: %s: %s\n", line, (int)(col)-(int)strlen(yytext), s, yytext);
-	 exit(0);
 }
 
 int main(int argc, char * argv[]) {
@@ -174,6 +173,7 @@ int main(int argc, char * argv[]) {
 		printAll(root,0);
 		printf("\n");
 		print_tables(create_tables(root));
+		generator(root,create_tables(root));
 	}
 
 	return 0;

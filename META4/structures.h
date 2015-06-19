@@ -13,6 +13,7 @@ typedef struct _node {
 }Node;
 
 
+//create new node and return it
 Node * make_node(char *name,char *type,char *value,Node *son,Node *brother, int line, int col){
     
     Node *new = malloc(sizeof(Node));
@@ -51,6 +52,7 @@ Node * make_node(char *name,char *type,char *value,Node *son,Node *brother, int 
     return new;
 }
 
+//add a node as a brother
 void addBrother(Node * temp, Node * brother) {
     if (temp == NULL || brother == NULL) return;
     while (temp->brother != NULL) {
@@ -59,12 +61,13 @@ void addBrother(Node * temp, Node * brother) {
     temp->brother = brother;
 }
 
+//add a child to a node
 void addChild(Node * temp, Node * child) {
     temp->son = child;
 }
-/*
-esta funcao pode dar bode -> o professor aconselhou a fazer uma versao iterativa para ver os tipos dos dados
-*/
+
+
+//print ast in postfix notation
 void printAll(Node * node,int level) {
     int i;
     if (node == NULL) return;
@@ -81,6 +84,7 @@ void printAll(Node * node,int level) {
     printAll(node->brother,level);
 }
 
+//check statlist sons, if its null create one, if it has no brothers return, else create new node with 
 Node * check_statlist(Node * temp, int line, int col) {
     if (temp == NULL ) {
         return make_node("StatList",NULL,NULL,NULL,NULL,line,col);
@@ -95,6 +99,7 @@ Node * check_statlist(Node * temp, int line, int col) {
     }
 }
 
+//if it has no brothers or it´s  null return it , else create new node with "temp" as a brother
 Node * check_statlist2(Node * temp, int line, int col) {
 
     if (temp == NULL || temp->brother == NULL) {
